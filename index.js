@@ -150,20 +150,51 @@ async function listLabels(auth) {
     });*/
 }
 
+let arrayOfEmails = [];
+let parentObject = {
+  emails: arrayOfEmails
+};
+
 //function to analyze text of an object
 async function analyzeText(text) {
+  let emailObject = {};
   let document = {
     content: text,
     type: 'PLAIN_TEXT'
   };
 
+  // ANALYZE SENTIMENT OF EACH TEXT
   const [result] = await languageClient.analyzeSentiment({document:document});
   //console.log(result);
   const sentiment = result.documentSentiment;
 
-  console.log(`Text: ${text}`);
-  console.log(`Sentiment score: ${sentiment.score}`);
-  console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
+  let senderREGEX = /Subject:.*/;
+  emailObject.sender = senderREGEX.exec(text);
+  emailObject.text = text;
+  emailObject.sentiment = sentiment;
+
+  //append to big array
+  arrayOfEmails.push(emailObject);
+  // CLASSIFY TEXT INTO CATEGORIES
+  /*const [results] = await languageClient.classifyText({document: document});
+  console.log(results);
+  const analysis = results.categories;
+
+  console.log('Categories:' );
+  analysis.forEach( (category) => {
+    console.log(`Name: ${category.name}, Confidence: ${category.confidence}`);
+  });*/
+
+  //WRITE TO FILE OUTPUT
+  await new Promise((resolve, reject) => {
+      fs.writeFile('emailOUTPUT.json', JSON.stringify(parentObject, null, 2), function (err) {
+          if (err)
+              reject(err);
+          else
+              resolve();
+      });
+
+  });
 }
 
 // Things we need in JSON file after filtering emails
