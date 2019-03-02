@@ -7,7 +7,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/ping', function (req, res, next) {
-    var response = errors.getResponseJSON('ENDPOINT_FUNCTION_SUCCESS', "pong");
+    var response = errors.getResponseJSON('ENDPOINT_FUNCTION_SUCCESS', "dine");
     res.status(response.code).send(response.res);
 });
 
