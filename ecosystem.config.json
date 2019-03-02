@@ -37,7 +37,7 @@
             "pre-setup": "npm install",
             "post-setup": "",
             "pre-deploy-local": "echo 'This is a local executed command'",
-            "post-deploy": "npm install && pm2 restart prod",
+            "post-deploy": "npm install && pm2 delete prod || true && pm2 start ecosystem.config.json --only prod",
             "env": {
                 "NODE_ENV": "prod",
                 "PORT": 3000,
