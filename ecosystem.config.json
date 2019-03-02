@@ -25,5 +25,25 @@
                 "BASE_URL": "/v1"
             }
         }
-    ]
+    ],
+    "deploy": {
+        "production": {
+            "user": "fedor",
+            "host": ["138.197.217.131"],
+            "ref": "origin/master",
+            "repo": "git@github.com:f3d0r/impuls-backend.git",
+            "path": "/home/api/prod_server",
+            "ssh_options": "StrictHostKeyChecking=no",
+            "pre-setup": "npm install",
+            "post-setup": "",
+            "pre-deploy-local": "echo 'This is a local executed command'",
+            "post-deploy": "npm install && pm2 restart prod",
+            "env": {
+                "NODE_ENV": "prod",
+                "PORT": 3000,
+                "THREAD_COUNT": "CPU_COUNT",
+                "BASE_URL": "/v1"
+            }
+        }
+    }
 }
