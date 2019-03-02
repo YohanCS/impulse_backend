@@ -61,3 +61,7 @@ typings/
 .next
 
 ecosystem.config.json
+
+#don't release credentials
+credentials.json
+token.json
