@@ -1,8 +1,31 @@
 {
     "apps": [{
-        "script": "app.js",
-        "instances": 1,
-        "autorestart": false,
-        "watch": true
-    }]
+            "name": "prod",
+            "script": "app.js",
+            "instances": 1,
+            "autorestart": false,
+            "watch": true,
+            "env": {
+                "NODE_ENV": "prod",
+                "PORT": 3000,
+                "THREAD_COUNT": "CPU_COUNT",
+                "BASE_URL": "/v1",
+                "REDIRECT": "https://api.fedor.me/v1/callback"
+            }
+        },
+        {
+            "name": "dev",
+            "script": "app.js",
+            "instances": 1,
+            "autorestart": false,
+            "watch": true,
+            "env": {
+                "NODE_ENV": "dev",
+                "PORT": 3001,
+                "THREAD_COUNT": "CPU_COUNT",
+                "BASE_URL": "/v1",
+                "REDIRECT": "https://api-dev.fedor.me/v1/callback"
+            }
+        }
+    ]
 }
