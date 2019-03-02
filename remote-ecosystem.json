@@ -1,6 +1,5 @@
 {
     "apps": [{
-        "name": "impuls-backend",
         "script": "app.js",
         "instances": 1,
         "autorestart": false,
