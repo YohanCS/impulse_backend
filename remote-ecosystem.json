@@ -4,20 +4,6 @@
         "script": "app.js",
         "instances": 1,
         "autorestart": false,
-        "watch": true,
-        "env_prod": {
-            "NODE_ENV": "prod",
-            "PORT": 3000,
-            "THREAD_COUNT": "CPU_COUNT",
-            "BASE_URL": "/v1",
-            "CALLBACK": "http://localhost:3000/v1/callback"
-        },
-        "env_dev": {
-            "NODE_ENV": "dev",
-            "PORT": 3001,
-            "THREAD_COUNT": "CPU_COUNT",
-            "BASE_URL": "/v1",
-            "CALLBACK": "http://localhost:3001/v1/callback"
-        }
+        "watch": true
     }]
 }
