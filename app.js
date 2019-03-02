@@ -56,23 +56,23 @@ cluster(function (worker) {
     app.use(require('./routes'));
 
     app.use(haltOnTimedout);
-    app.use(errorHandler);
-    app.use(haltOnTimedout);
+    // app.use(errorHandler);
+    // app.use(haltOnTimedout);
 
-    function errorHandler(error, req, res, next) {
-        if (error.message == "Response timeout") {
-            response = errors.getResponseJSON('RESPONSE_TIMEOUT', "Please check API status at status.trya.space");
-            res.status(response.code).send(response.res);
-        } else {
-            if (process.env.NODE_ENV == "dev") {
-                console.log(JSON.stringify("ERROR: " + JSON.stringify(error)));
-                res.status(500).send(error);
-            } else {
-                response = errors.getResponseJSON('GENERAL_SERVER_ERROR', "Please check API status at status.trya.space");
-                res.status(response.code).send(response.res);
-            }
-        }
-    }
+    // function errorHandler(error, req, res, next) {
+    //     if (error.message == "Response timeout") {
+    //         response = errors.getResponseJSON('RESPONSE_TIMEOUT', "Please check API status at status.trya.space");
+    //         res.status(response.code).send(response.res);
+    //     } else {
+    //         if (process.env.NODE_ENV == "dev") {
+    //             console.log(JSON.stringify("ERROR: " + JSON.stringify(error)));
+    //             res.status(500).send(error);
+    //         } else {
+    //             response = errors.getResponseJSON('GENERAL_SERVER_ERROR', "Please check API status at status.trya.space");
+    //             res.status(response.code).send(response.res);
+    //         }
+    //     }
+    // }
 
     function haltOnTimedout(req, rew, next) {
         if (!req.timedout)
