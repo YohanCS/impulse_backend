@@ -8,6 +8,64 @@ var request = require('request');
 const CLIENT_ID = "177279057869-n5j48p4vn7aucbkvjvcst1qc2j61mgsn.apps.googleusercontent.com";
 const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
 
+const testData = {
+    internshipObjects: [{
+            name: "Amazon",
+            domain: "amazon.com",
+            role: "SWE Intern",
+            status: "Accepted"
+        },
+        {
+            name: "Honey",
+            domain: "joinhoney.com",
+            role: "SWE Intern",
+            status: "Interview"
+        },
+        {
+            name: "Facebook",
+            domain: "facebook.com",
+            role: "SWE Intern",
+            status: "Rejected"
+        },
+        {
+            name: "Spotify",
+            domain: "spotify.com",
+            role: "SWE Intern",
+            status: "Applied"
+        },
+        {
+            name: "Honey",
+            domain: "joinhoney.com",
+            role: "SWE Intern",
+            status: "Interview"
+        },
+        {
+            name: "Facebook",
+            domain: "facebook.com",
+            role: "SWE Intern",
+            status: "Rejected"
+        },
+        {
+            name: "Spotify",
+            domain: "spotify.com",
+            role: "SWE Intern",
+            status: "Applied"
+        },
+        {
+            name: "Facebook",
+            domain: "facebook.com",
+            role: "SWE Intern",
+            status: "Rejected"
+        },
+        {
+            name: "Spotify",
+            domain: "spotify.com",
+            role: "SWE Intern",
+            status: "Applied"
+        }
+    ]
+};
+
 passport.use(new GoogleStrategy({
         clientID: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
@@ -81,19 +139,10 @@ router.get('/ping', function (req, res, next) {
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && req.query.userId != 'undefined' && req.query.userId != '') {
-        var response = await new Promise((resolve, reject) => {
-            request.get(`https://www.googleapis.com/gmail/v1/users/${req.query.id}/messages/`, function (error, response) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(response.body);
-                }
-            });
-        });
+        res.json(testData);
     } else {
-        res.status(response.code).send(response.res);
+        res.status(402).send(`Missing "accessCode" and/or "userId" query.`);
     }
-
 }));
 
 router.get('/auth',
