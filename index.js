@@ -1,8 +1,9 @@
 const fs = require('fs');
 const readline = require('readline');
-const {
-    google
-} = require('googleapis');
+const {google} = require('googleapis');
+//Import the Google Cloud Natural language Processing library
+const language = require('@google-cloud/language');
+const languageClient = new language.LanguageServiceClient();
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
@@ -126,8 +127,15 @@ async function listLabels(auth) {
     var results = await Promise.all(reqs);
     console.log(`LENGTH OF RETURNED EMAILS: ${results.length}`);
 
+    console.log(results.length);
+
     // FILE OUTPUT
-    var textOutput = "";
+    // iterate through results and analyze each text
+    results.forEach( (currentEmail) => {
+      analyzeText(currentEmail);
+    });
+    // commented out as we dont need to write to a txt file
+    /*var textOutput = "";
     results.forEach(function (currentEmail) {
         textOutput += currentEmail;
     });
@@ -138,10 +146,25 @@ async function listLabels(auth) {
             else
                 resolve();
         });
-    });
+
+    });*/
 }
 
+//function to analyze text of an object
+async function analyzeText(text) {
+  let document = {
+    content: text,
+    type: 'PLAIN_TEXT'
+  };
 
+  const [result] = await languageClient.analyzeSentiment({document:document});
+  //console.log(result);
+  const sentiment = result.documentSentiment;
+
+  console.log(`Text: ${text}`);
+  console.log(`Sentiment score: ${sentiment.score}`);
+  console.log(`Sentiment magnitude: ${sentiment.magnitude}`);
+}
 
 // Things we need in JSON file after filtering emails
 // message
