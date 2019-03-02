@@ -5,6 +5,9 @@ const {google} = require('googleapis');
 const language = require('@google-cloud/language');
 const languageClient = new language.LanguageServiceClient();
 
+//TRYING OUT NATURAL LANGUAGE PROCESSING FOR ORGANIZATIONS
+var nlp = require('compromise')
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -112,11 +115,7 @@ async function listLabels(auth) {
                 if (err) {
                     reject(err);
                 } else {
-                    if (res.data.payload.parts[0].body.data != null) {
-                        resolve(new Buffer.from(res.data.payload.parts[0].body.data, 'base64').toString() + "\n");
-                    } else { //email has multimedia so its pushed to somewhere else
-                        resolve(new Buffer.from(res.data.payload.parts[0].parts[0].body.data, 'base64').toString());
-                    }
+                  resolve(res);
                 }
             });
         }));
@@ -134,6 +133,7 @@ async function listLabels(auth) {
     results.forEach( (currentEmail) => {
       analyzeText(currentEmail);
     });
+
     // commented out as we dont need to write to a txt file
     /*var textOutput = "";
     results.forEach(function (currentEmail) {
@@ -150,13 +150,39 @@ async function listLabels(auth) {
     });*/
 }
 
-let arrayOfEmails = [];
+let arrayOfEmails = []; // emails with intern or position word in them
 let parentObject = {
   emails: arrayOfEmails
 };
 
 //function to analyze text of an object
-async function analyzeText(text) {
+// @param an entire email's data
+async function analyzeText(res) {
+
+  // GRAB SUBJECT OF TEXT
+  let subject = res.data.payload.headers;
+  subject.forEach( (name) => {
+    if(name['name'] == 'Subject') {
+      subject = name['value'];
+    }
+  });
+
+  // PUT CONTENT INTO READABLE TEXT
+  let text = null; //used later
+  if (res.data.payload.parts[0].body.data != null) {
+      text = new Buffer.from(res.data.payload.parts[0].body.data, 'base64').toString();
+  } else { //email has multimedia so its pushed to somewhere else
+      text = new Buffer.from(res.data.payload.parts[0].parts[0].body.data, 'base64').toString();
+  }
+
+  //Only get emails with "Position" or "Intern" in the email
+  let internREGEX = /intern|position/i;
+  if(!internREGEX.test(text)) {
+    //dont want to execute rest of the function :^)
+    return ;
+  }
+
+  // INITIALIZE EMAILOBJECT TO STORE LATER
   let emailObject = {};
   let document = {
     content: text,
@@ -168,14 +194,29 @@ async function analyzeText(text) {
   //console.log(result);
   const sentiment = result.documentSentiment;
 
-  let senderREGEX = /Subject:.*/;
-  emailObject.sender = senderREGEX.exec(text);
+  //regex to find Capital words
+  let senderREGEX = /(?<=\s)([A-Z]+[a-z]*)(?=\s)/gm;
+  possibleOrgs = subject;
+  //possibleOrgs = nlp(possibleOrgs[0]).organizations().out('topk'); // organizations
+  //console.log("POSSIBLE ORGS:");
+  //console.log(possibleOrgs);
+
+  emailObject.subject = subject; //possible ORG
   emailObject.text = text;
   emailObject.sentiment = sentiment;
 
-  //append to big array
+  //append to big array which parentObject contains
   arrayOfEmails.push(emailObject);
+
   // CLASSIFY TEXT INTO CATEGORIES
+  let nextStageRegex = /Congratulation|challenge|problem|algorithm/;
+  if(nextStageRegex.test(text)) {
+    //probably a bad review
+    emailObject.status = 'NEXT STAGE';
+  } else {
+    //probably a good review
+    emailObject.status = 'DECLINED';
+  }
   /*const [results] = await languageClient.classifyText({document: document});
   console.log(results);
   const analysis = results.categories;
@@ -194,7 +235,7 @@ async function analyzeText(text) {
               resolve();
       });
 
-  });
+  });  //REMOVE COMMENT LATER
 }
 
 // Things we need in JSON file after filtering emails
