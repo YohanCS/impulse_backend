@@ -97,13 +97,17 @@ passport.use(new GoogleStrategy({
         passReqToCallback: true
     },
     async function (req, accessToken, refreshToken, profile, done) {
-        await resetLabels(accessToken);
-        var emailsList = await getEmailsList(accessToken);
-        console.log(`ACCESS CODE: ${accessToken}`);
-        var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
-        var parsedEmailObjects = getFields(rawEmailObjects);
-        var mergedResult = await mergeDomains(parsedEmailObjects);
-        done(JSON.stringify(mergedResult));
+        try {
+            await resetLabels(accessToken);
+            var emailsList = await getEmailsList(accessToken);
+            console.log(`ACCESS CODE: ${accessToken}`);
+            var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
+            var parsedEmailObjects = getFields(rawEmailObjects);
+            var mergedResult = await mergeDomains(parsedEmailObjects);
+            done(JSON.stringify(mergedResult));
+        } catch (e) {
+            done(`Error! Something went wrong. Could it be an invalid or expired 'accessCode' query?`);
+        }
     }));
 
 router.get('/', function (req, res, next) {
@@ -121,17 +125,18 @@ router.get('/test_data', function (req, res, next) {
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '') {
         try {
-            var accessCode = req.query.accessCode;
-            var emailsList = await getEmailsList(accessCode);
-            var rawEmailObjects = await Promise.all(analyzeEmails(accessCode, emailsList));
+            await resetLabels(accessToken);
+            var emailsList = await getEmailsList(accessToken);
+            console.log(`ACCESS CODE: ${accessToken}`);
+            var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
             var parsedEmailObjects = getFields(rawEmailObjects);
             var mergedResult = await mergeDomains(parsedEmailObjects);
-            res.json(mergedResult);
+            done(JSON.stringify(mergedResult));
         } catch (e) {
-            res.status(500).send("Something went wrong. Error! Could be an invalid or expired 'accessCode' query?");
+            res.status(500).send(`Error! Something went wrong. Could it be an invalid or expired 'accessCode' query?`);
         }
     } else {
-        res.status(404).send(`Missing "accessCode" and/or "userId" query.`);
+        res.status(404).send(`Missing "accessCode" query.`);
     }
 }));
 
