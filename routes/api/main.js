@@ -87,7 +87,11 @@ router.get('/ping', function (req, res, next) {
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && typeof req.query.userId != 'undefined' && req.query.userId != '') {
-        res.json(await analyzeEmails(req.query.accessCode, req.query.userId));
+        try {
+            res.json(await analyzeEmails(req.query.accessCode, req.query.userId));
+        } catch (e) {
+            res.status(500).send("Something went wrong. Error! Could be an invalid or expired 'userId' or 'accessCode'?");
+        }
     } else {
         res.status(404).send(`Missing "accessCode" and/or "userId" query.`);
     }
