@@ -87,7 +87,7 @@ router.get('/ping', function (req, res, next) {
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && req.query.userId != 'undefined' && req.query.userId != '') {
-        res.send(await analyzeEmails(accessToken, profile.id));
+        res.send(await analyzeEmails(req.query.accessToken, req.query.userId));
     } else {
         res.status(402).send(`Missing "accessCode" and/or "userId" query.`);
     }
