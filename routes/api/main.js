@@ -74,7 +74,11 @@ passport.use(new GoogleStrategy({
         passReqToCallback: true
     },
     async function (req, accessToken, refreshToken, profile, done) {
-        done(JSON.stringify(await analyzeEmails(accessToken, profile.id)));
+        var emailsList = await getEmailsList(accessToken, profile.id);
+        var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, profile.id, emailsList));
+        var parsedEmailObjects = getFields(rawEmailObjects);
+        var mergedResult = await mergeDomains(parsedEmailObjects);
+        done(JSON.stringify(mergedResult));
     }));
 
 router.get('/', function (req, res, next) {
@@ -85,10 +89,20 @@ router.get('/ping', function (req, res, next) {
     res.send("pong");
 });
 
+router.get('/test_data', function (req, res, next) {
+    res.json(testData);
+});
+
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && typeof req.query.userId != 'undefined' && req.query.userId != '') {
         try {
-            res.json(await analyzeEmails(req.query.accessCode, req.query.userId));
+            var accessCode = req.query.accessCode;
+            var userId = req.query.userId;
+            var emailsList = await getEmailsList(accessCode, userId);
+            var rawEmailObjects = await Promise.all(analyzeEmails(accessCode, userId, emailsList));
+            var parsedEmailObjects = getFields(rawEmailObjects);
+            var mergedResult = await mergeDomains(parsedEmailObjects);
+            res.json(mergedResult);
         } catch (e) {
             res.status(500).send("Something went wrong. Error! Could be an invalid or expired 'userId' or 'accessCode'?");
         }
@@ -115,8 +129,7 @@ router.get('/callback',
         res.redirect('/');
     });
 
-
-async function analyzeEmails(accessToken, profileId) {
+function getEmailsList(accessToken, profileId) {
     var options = {
         method: 'GET',
         url: `https://www.googleapis.com/gmail/v1/users/${profileId}/messages`,
@@ -126,7 +139,7 @@ async function analyzeEmails(accessToken, profileId) {
         json: true
     };
 
-    var messageList = await new Promise(function (resolve, reject) {
+    return new Promise(function (resolve, reject) {
         request(options, function (error, response, body) {
             if (error) {
                 reject(error);
@@ -135,6 +148,9 @@ async function analyzeEmails(accessToken, profileId) {
             }
         });
     });
+}
+
+function analyzeEmails(accessToken, profileId, messageList) {
     var reqs = [];
     messageList.messages.forEach(function (currentMessage) {
         var options = {
@@ -156,66 +172,101 @@ async function analyzeEmails(accessToken, profileId) {
             });
         }));
     });
-    console.log(`ACCESS CODE ${accessToken} , PROFILE ID ${profileId}`);
-    return await getFields(await Promise.all(reqs));
+    return reqs;
 }
 
-async function getFields(emailObjects) {
-    var reqs = [];
-
+function getFields(emailObjects) {
+    var rets = [];
     for (var index = 0; index < emailObjects.length; index++) {
-        reqs.push(new Promise((resolve, reject) => {
-            var emailObject = emailObjects[index];
-            var ret = {};
-            emailObject.payload.headers.forEach(function (header) {
-                if (header.name == "From" || header.name == "Return-Path") {
-                    ret.from = {};
+        var emailObject = emailObjects[index];
+        var ret = {};
+        emailObject.payload.headers.forEach(function (header) {
+            if (header.name == "From" || header.name == "Return-Path") {
+                ret.from = {};
+                var tempEmail = header.value;
+                tempEmail = tempEmail.substring(tempEmail.indexOf("<") + 1, tempEmail.indexOf(">"));
+                ret.from.email = tempEmail;
+                if (tempEmail.length < 5) {
                     ret.from.email = header.value;
-                } else if (header.name == "To" || header.name == "Delivered-To") {
-                    ret.to = header.value;
-                } else if (header.name == "Subject") {
-                    ret.subject = header.value;
-                } else if (header.name == "Date") {
-                    ret.date = header.value;
                 }
-            });
-            ret.from.domain = ret.from.email.substring(ret.from.email.indexOf("<") + 1, ret.from.email.indexOf(">"));
-            ret.from.domain = ret.from.domain.substring(ret.from.domain.indexOf("@") + 1, ret.from.domain.length);
-
-            var randStatus = getRandomInt(4);
-
-            ret.status = APP_STATUSES[randStatus];
-
-            var options = {
-                method: 'POST',
-                url: 'https://api.fullcontact.com/v3/company.enrich',
-                headers: {
-                    authorization: 'Bearer O2hg5Dwms6XzvSjoqefU9OrFrjFINlgy',
-                    'content-type': 'application/json'
-                },
-                body: {
-                    domain: ret.from.domain
-                },
-                json: true
-            };
-            request(options, function (error, response, body) {
-                if (error) {
-                    reject(error);
-                } else {
-                    ret.from.name = body.name;
-                    ret.from.logo = body.logo;
-                    ret.from.website = body.website;
-                    resolve(ret);
-                }
-            });
-
-        }));
+                ret.from.domain = ret.from.email.substring(ret.from.email.indexOf("@") + 1, ret.from.email.length);
+            } else if (header.name == "To" || header.name == "Delivered-To") {
+                ret.to = header.value;
+            } else if (header.name == "Subject") {
+                ret.subject = header.value;
+            } else if (header.name == "Date") {
+                ret.date = header.value;
+            }
+        });
+        ret.status = APP_STATUSES[getRandomInt(4)];
+        rets.push(ret);
     }
-    return await Promise.all(reqs);
+    return rets;
+}
+
+async function mergeDomains(emailInfo) {
+    var finalRet = [];
+    var uniqueEmails = emailInfo.map(current => current.from.email).filter(onlyUnique);
+    var uniqueDomains = uniqueEmails.map(current => current.substring(current.indexOf("@") + 1, current.length));
+    uniqueDomains = uniqueDomains.filter(onlyUnique);
+    for (var index = 0; index < uniqueDomains.length; index++) {
+        console.log(`STARTING ${index + 1} OUT OF ${uniqueDomains.length}, DOMAIN ${uniqueDomains[index]}`);
+        var currentDomain = uniqueDomains[index];
+        var current = {};
+        current.domain = currentDomain;
+        var domainInfo = await getDomainInfo(current.domain);
+        current.name = domainInfo.name;
+        current.logo = domainInfo.logo;
+        current.website = "https://" + current.domain;
+        try {
+            current.location = `${domainInfo.geo.city}, ${domainInfo.geo.state}`;
+        } catch (e) {
+            current.location = `U.S.A.`;
+        }
+        current.emails = emailInfo.filter(function (currentMessage) {
+            var currentEmail = currentMessage.from.email;
+            return emailMatchesDomain(currentEmail, current.domain);
+        });
+        finalRet.push(current);
+        console.log(`DONE WITH ${index + 1} OUT OF ${uniqueDomains.length}`);
+    }
+    return finalRet;
 }
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
+}
+
+function emailMatchesDomain(email, domain) {
+    return email.substring(email.indexOf("@") + 1, email.length).trim() == domain;
+}
+
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
+function getDomainInfo(domain) {
+    var options = {
+        method: 'GET',
+        url: 'https://company.clearbit.com/v2/companies/find',
+        qs: {
+            domain
+        },
+        headers: {
+            authorization: 'Bearer sk_2ad0b011e1c982db6115fe8ab4225850'
+        },
+        json: true
+    };
+
+    return new Promise((resolve, reject) => {
+        request(options, function (error, response, body) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(body);
+            }
+        });
+    });
 }
 
 module.exports = router;
