@@ -583,9 +583,11 @@ async function performSequence(accessToken) {
     var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
     var parsedEmailObjects = getFields(rawEmailObjects);
 
-    // var labelIds = await getLabelIds(accessToken);
-    // var labelEmailReqs = labelEmails(accessToken, parsedEmailObjects, labelIds);
-    // await Promise.all(labelEmailReqs);
+    var labelIds = await getLabelIds(accessToken);
+    var labelEmailReqs = labelEmails(accessToken, parsedEmailObjects, labelIds);
+    for (var index = 0; index < labelEmailReqs.length; index++) {
+        await labelEmailReqs[index];
+    }
 
     var mergedResult = await mergeDomains(parsedEmailObjects);
     return mergedResult;
