@@ -1,5 +1,4 @@
 var router = require('express').Router();
-var errors = require('../../misc/errors/errorHandler');
 var asyncHandler = require('express-async-handler');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var passport = require('passport');
@@ -7,6 +6,8 @@ var request = require('request');
 
 const CLIENT_ID = "177279057869-n5j48p4vn7aucbkvjvcst1qc2j61mgsn.apps.googleusercontent.com";
 const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
+
+const APP_STATUSES = ["Applied", "Rejected", "Interviewing", "Offer received :)"];
 
 const testData = {
     internshipObjects: [{
@@ -73,60 +74,7 @@ passport.use(new GoogleStrategy({
         passReqToCallback: true
     },
     async function (req, accessToken, refreshToken, profile, done) {
-        var options = {
-            method: 'GET',
-            url: `https://www.googleapis.com/gmail/v1/users/${profile.id}/messages`,
-            headers: {
-                'Authorization': 'Bearer ' + accessToken
-            },
-            json: true
-        };
-
-        var messageList = await new Promise(function (resolve, reject) {
-            request(options, function (error, response, body) {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(body);
-                }
-            });
-        });
-        var reqs = [];
-        messageList.messages.forEach(function (currentMessage) {
-            var options = {
-                method: 'GET',
-                url: `https://www.googleapis.com/gmail/v1/users/${profile.id}/messages/${currentMessage.id}`,
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken
-                },
-                json: true
-            };
-
-            reqs.push(new Promise(function (resolve, reject) {
-                request(options, function (error, response, body) {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(body);
-                    }
-                });
-            }));
-        });
-        var results = await Promise.all(reqs);
-        var payloadParts = [];
-        results.forEach(function (currentMessage) {
-            var currentPayload = "";
-            currentMessage.payload.parts.forEach(function (current) {
-                currentPayload += current.body.data + Buffer.from("\n").toString('base64');
-            });
-            payloadParts.push(currentPayload.trim());
-        });
-        var strRet = "";
-        payloadParts.forEach(function (current) {
-            strRet += Buffer.from(current, 'base64').toString('ascii') + "\n-------------------\n";
-        });
-        strRet = strRet.trim();
-        done(strRet);
+        done(JSON.stringify(await analyzeEmails(accessToken, profile.id)));
     }));
 
 router.get('/', function (req, res, next) {
@@ -139,7 +87,7 @@ router.get('/ping', function (req, res, next) {
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
     if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && req.query.userId != 'undefined' && req.query.userId != '') {
-        res.json(testData);
+        res.send(await analyzeEmails(req.query.accessToken, req.query.userId));
     } else {
         res.status(402).send(`Missing "accessCode" and/or "userId" query.`);
     }
@@ -160,7 +108,126 @@ router.get('/callback',
     }),
     function (req, res) {
         // Successful authentication, redirect home.
-        console.log("SUCCESS AUTH");
         res.redirect('/');
     });
+
+
+async function analyzeEmails(accessToken, profileId) {
+    var options = {
+        method: 'GET',
+        url: `https://www.googleapis.com/gmail/v1/users/${profileId}/messages`,
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        json: true
+    };
+
+    var messageList = await new Promise(function (resolve, reject) {
+        request(options, function (error, response, body) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(body);
+            }
+        });
+    });
+    var reqs = [];
+    messageList.messages.forEach(function (currentMessage) {
+        var options = {
+            method: 'GET',
+            url: `https://www.googleapis.com/gmail/v1/users/${profileId}/messages/${currentMessage.id}`,
+            headers: {
+                'Authorization': 'Bearer ' + accessToken
+            },
+            json: true
+        };
+
+        reqs.push(new Promise(function (resolve, reject) {
+            request(options, function (error, response, body) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(body);
+                }
+            });
+        }));
+    });
+    return await getFields(await Promise.all(reqs));
+
+
+    // var payloadParts = [];
+    // results.forEach(function (currentMessage) {
+    //     var currentPayload = "";
+    //     currentMessage.payload.parts.forEach(function (current) {
+    //         currentPayload += current.body.data + Buffer.from("\n").toString('base64');
+    //     });
+    //     payloadParts.push(currentPayload.trim());
+    // });
+    // var strRet = "";
+    // var index = 0;
+    // payloadParts.forEach(function (current) {
+    //     strRet += results[index++].id + " " + Buffer.from(current, 'base64').toString('ascii') + "\n-------------------\n";
+    // });
+    // strRet = strRet.trim();
+    // return strRet;
+}
+
+async function getFields(emailObjects) {
+    var reqs = [];
+
+    for (var index = 0; index < emailObjects.length; index++) {
+        reqs.push(new Promise((resolve, reject) => {
+            var emailObject = emailObjects[index];
+            var ret = {};
+            emailObject.payload.headers.forEach(function (header) {
+                if (header.name == "From" || header.name == "Return-Path") {
+                    ret.from = {};
+                    ret.from.email = header.value;
+                } else if (header.name == "To" || header.name == "Delivered-To") {
+                    ret.to = header.value;
+                } else if (header.name == "Subject") {
+                    ret.subject = header.value;
+                } else if (header.name == "Date") {
+                    ret.date = header.value;
+                }
+            });
+            ret.from.domain = ret.from.email.substring(ret.from.email.indexOf("<") + 1, ret.from.email.indexOf(">"));
+            ret.from.domain = ret.from.domain.substring(ret.from.domain.indexOf("@") + 1, ret.from.domain.length);
+
+            var randStatus = getRandomInt(4);
+
+            ret.status = APP_STATUSES[randStatus];
+
+            var options = {
+                method: 'POST',
+                url: 'https://api.fullcontact.com/v3/company.enrich',
+                headers: {
+                    authorization: 'Bearer O2hg5Dwms6XzvSjoqefU9OrFrjFINlgy',
+                    'content-type': 'application/json'
+                },
+                body: {
+                    domain: ret.from.domain
+                },
+                json: true
+            };
+            request(options, function (error, response, body) {
+                if (error) {
+                    reject(error);
+                } else {
+                    ret.from.name = body.name;
+                    ret.from.logo = body.logo;
+                    ret.from.website = body.website;
+                    resolve(ret);
+                }
+            });
+
+        }));
+    }
+    return await Promise.all(reqs);
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 module.exports = router;
