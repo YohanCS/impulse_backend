@@ -8,6 +8,9 @@ const languageClient = new language.LanguageServiceClient();
 //TRYING OUT NATURAL LANGUAGE PROCESSING FOR ORGANIZATIONS
 var nlp = require('compromise')
 
+// TRYING OUT AXIOUS TO LOOK UP A SEARCH
+const axios = require('axios');
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -128,6 +131,7 @@ async function listLabels(auth) {
 
     console.log(results.length);
 
+
     // FILE OUTPUT
     // iterate through results and analyze each text
     results.forEach( (currentEmail) => {
@@ -151,9 +155,6 @@ async function listLabels(auth) {
 }
 
 let arrayOfEmails = []; // emails with intern or position word in them
-let parentObject = {
-  emails: arrayOfEmails
-};
 
 //function to analyze text of an object
 // @param an entire email's data
@@ -195,8 +196,9 @@ async function analyzeText(res) {
   const sentiment = result.documentSentiment;
 
   //regex to find Capital words
-  let senderREGEX = /(?<=\s)([A-Z]+[a-z]*)(?=\s)/gm;
-  possibleOrgs = subject;
+  //  first way: look for positions
+  // second way: look for number (before and after)
+  let senderREGEX = /(?<=\s)([A-Z])+[a-z]*(?=\s)/gm;
   //possibleOrgs = nlp(possibleOrgs[0]).organizations().out('topk'); // organizations
   //console.log("POSSIBLE ORGS:");
   //console.log(possibleOrgs);
@@ -217,18 +219,20 @@ async function analyzeText(res) {
     //probably a good review
     emailObject.status = 'DECLINED';
   }
-  /*const [results] = await languageClient.classifyText({document: document});
-  console.log(results);
-  const analysis = results.categories;
 
-  console.log('Categories:' );
-  analysis.forEach( (category) => {
-    console.log(`Name: ${category.name}, Confidence: ${category.confidence}`);
-  });*/
+  arrayOfLines = text.split('\n');
+  console.log(arrayOfLines[arrayOfLines.length - 2]);
+  emailObject.position = arrayOfLines[arrayOfLines.length - 4];
+  emailObject.company = arrayOfLines[arrayOfLines.length - 2];
+
+
+  const Url = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyBP-SxuOQvuK2GrB1bnz9OyZgkaMqc05iU&cx=017576662512468239146:omuauf_lfve&q=lectures';
+  axios.get(Url)
+    .then(data => { console.log(data)}).catch( err => { console.log(err) });
 
   //WRITE TO FILE OUTPUT
   await new Promise((resolve, reject) => {
-      fs.writeFile('emailOUTPUT.json', JSON.stringify(parentObject, null, 2), function (err) {
+      fs.writeFile('emailOUTPUT.json', JSON.stringify(arrayOfEmails, null, 2), function (err) {
           if (err)
               reject(err);
           else
@@ -237,6 +241,7 @@ async function analyzeText(res) {
 
   });  //REMOVE COMMENT LATER
 }
+
 
 // Things we need in JSON file after filtering emails
 // message
