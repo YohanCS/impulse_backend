@@ -86,10 +86,10 @@ router.get('/ping', function (req, res, next) {
 });
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
-    if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && req.query.userId != 'undefined' && req.query.userId != '') {
-        res.send(await analyzeEmails(req.query.accessToken, req.query.userId));
+    if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && typeof req.query.userId != 'undefined' && req.query.userId != '') {
+        res.json(await analyzeEmails(req.query.accessCode, req.query.userId));
     } else {
-        res.status(402).send(`Missing "accessCode" and/or "userId" query.`);
+        res.status(404).send(`Missing "accessCode" and/or "userId" query.`);
     }
 }));
 
@@ -152,24 +152,8 @@ async function analyzeEmails(accessToken, profileId) {
             });
         }));
     });
+    console.log(`ACCESS CODE ${accessToken} , PROFILE ID ${profileId}`);
     return await getFields(await Promise.all(reqs));
-
-
-    // var payloadParts = [];
-    // results.forEach(function (currentMessage) {
-    //     var currentPayload = "";
-    //     currentMessage.payload.parts.forEach(function (current) {
-    //         currentPayload += current.body.data + Buffer.from("\n").toString('base64');
-    //     });
-    //     payloadParts.push(currentPayload.trim());
-    // });
-    // var strRet = "";
-    // var index = 0;
-    // payloadParts.forEach(function (current) {
-    //     strRet += results[index++].id + " " + Buffer.from(current, 'base64').toString('ascii') + "\n-------------------\n";
-    // });
-    // strRet = strRet.trim();
-    // return strRet;
 }
 
 async function getFields(emailObjects) {
