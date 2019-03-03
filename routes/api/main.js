@@ -4,6 +4,10 @@ var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var passport = require('passport');
 var request = require('request');
 var moment = require('moment');
+var promiseLimit = require('promise-limit');
+var limit = promiseLimit(45);
+
+var rp = require('request-promise');
 
 const CLIENT_ID = "177279057869-n5j48p4vn7aucbkvjvcst1qc2j61mgsn.apps.googleusercontent.com";
 const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
@@ -100,18 +104,45 @@ passport.use(new GoogleStrategy({
         try {
             done(JSON.stringify(await performSequence(accessToken)));
         } catch (e) {
+            console.log(e);
             done(`Error! Something went wrong. Could it be an invalid or expired 'accessCode' query?`);
         }
     }));
 
 async function performSequence(accessToken) {
+    console.log(`ACCESS CODE: ${accessToken}`);
     await resetLabels(accessToken);
     var emailsList = await getEmailsList(accessToken);
-    console.log(`ACCESS CODE: ${accessToken}`);
     var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
     var parsedEmailObjects = getFields(rawEmailObjects);
+    var labelIds = await getLabelIds(accessToken);
+    var labelEmailReqs = labelEmails(accessToken, parsedEmailObjects, labelIds);
+    await Promise.all(labelEmailReqs);
     var mergedResult = await mergeDomains(parsedEmailObjects);
-    return JSON.stringify(mergedResult);
+    return mergedResult;
+}
+
+function labelEmails(accessToken, parsedEmailObjects, labelIds) {
+    var labelReqs = [];
+    var labelReqOptions = [];
+    for (var index = 0; index < parsedEmailObjects.length; index++) {
+        var currentEmail = parsedEmailObjects[index];
+        var options = {
+            method: 'POST',
+            url: `https://www.googleapis.com/gmail/v1/users/me/messages/${currentEmail.id}/modify`,
+            headers: {
+                authorization: 'Bearer ' + accessToken,
+                'content-type': 'application/json'
+            },
+            body: {
+                "addLabelIds": labelIds.filter(current => current.messageLabel == currentEmail.status).map(current => current.id),
+            },
+            json: true
+        };
+        labelReqOptions.push(options);
+        labelReqs.push(limit(() => rp(options)));
+    }
+    return labelReqs;
 }
 
 router.get('/', function (req, res, next) {
@@ -131,6 +162,7 @@ router.get('/get_emails', asyncHandler(async (req, res, next) => {
         try {
             res.json(await performSequence(req.query.accessToken));
         } catch (e) {
+            console.log(e);
             res.status(500).send(`Error! Something went wrong. Could it be an invalid or expired 'accessToken' query?`);
         }
     } else {
@@ -332,7 +364,6 @@ function addLabel(accessToken, name, color) {
                 reject(error);
             } else {
                 resolve(body);
-                // console.log(JSON.stringify(body.error.errors[0]));
             }
         });
     });
@@ -362,8 +393,8 @@ async function resetLabels(accessToken) {
     labelsToDelete.forEach(function (current) {
         reqs.push(new Promise((resolve, reject) => {
             var options = {
-                method: 'GET',
-                url: 'https://www.googleapis.com/gmail/v1/users/me/messages/' + current.id,
+                method: 'DELETE',
+                url: `https://www.googleapis.com/gmail/v1/users/me/labels/${current.id}`,
                 headers: {
                     authorization: 'Bearer ' + accessToken
                 },
@@ -385,12 +416,12 @@ async function resetLabels(accessToken) {
     await Promise.all(addLabelRequests);
 }
 
-async function getLabelIds(accessToken) {
+function getLabelIds(accessToken) {
     var options = {
         method: 'GET',
         url: 'https://www.googleapis.com/gmail/v1/users/me/labels',
         headers: {
-            authorization: 'Bearer ya29.GlvBBg86nHqy3Y1Yz60nEqqj-kGBaOqw1njBGvzKt87KuR7_wSFyKHuXmsY_vfo6BwTZ1O_WJukkd7fyZIckWpXuOwbqcfvGGpAc-8VN8dpldOG7dsVwMjcc3Gzg'
+            authorization: 'Bearer ' + accessToken
         },
         json: true
     };
@@ -401,7 +432,7 @@ async function getLabelIds(accessToken) {
             else {
                 var newLabels = LABELS.slice(0);
                 for (var i = 0; i < body.labels.length; i++) {
-                    for (var j = 0; j < newLabels.length; i++) {
+                    for (var j = 0; j < newLabels.length; j++) {
                         if (body.labels[i].name == newLabels[j].name) {
                             newLabels[j].id = body.labels[i].id;
                         }
