@@ -223,7 +223,7 @@ const testData = [{
         "subject": "Application for Dice Job Business Analyst/Quality Analyst at Mobilyte",
         "id": "16942210578ad966",
         "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Business Analyst/Quality Analyst with Mobilyte through Dice. While you wait to hear back, here are a few other...",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -245,7 +245,7 @@ const testData = [{
         "subject": "Application for Dice Job Sr SAP Basis Administrator at Princeton IT Services",
         "id": "169421fe49e67546",
         "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Sr SAP Basis Administrator with Princeton IT Services through Dice. While you wait to hear back, here are a...",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -260,7 +260,7 @@ const testData = [{
     }],
     "app_type": "common",
     "recent_date": "Sun, 03 Mar 2019 05:57:35 +0000",
-    "recent_status": "Interviewing"
+    "recent_status": "Offer Received"
 }, {
     "domain": "glassdoor.com",
     "name": "Glassdoor",
@@ -288,7 +288,7 @@ const testData = [{
         "subject": "Application to Bluebeam, Inc. completed. Here''s what to do next.",
         "id": "1694211a47726861",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Bluebeam Software Engineering Manager (Cloud Application) Bluebeam Your application was submitted at the...",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -299,7 +299,7 @@ const testData = [{
         "subject": "Application to Medely completed. Here''s what to do next.",
         "id": "16942111e92b9829",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Medely Backend Software Engineer Medely Your application was submitted at the address we have for Medely....",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -354,7 +354,7 @@ const testData = [{
         "subject": "Application to Shinetech completed. Here''s what to do next.",
         "id": "169420ce6a6f1e6c",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Shinetech .NET Developer Shinetech Your application was submitted at the address we have for Shinetech....",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -409,7 +409,7 @@ const testData = [{
         "subject": "Application to Net Consensus Inc completed. Here''s what to do next.",
         "id": "169420a3e6abdd00",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Net Consensus Software Developer Net Consensus Your application was submitted at the address we have for Net...",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -431,11 +431,11 @@ const testData = [{
         "subject": "Application to Optical Zonu Corp completed. Here''s what to do next.",
         "id": "1694209d99aa739e",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Optical Zonu Corp Firmware Engineer Optical Zonu Corp Your application was submitted at the address we have...",
-        "status": "Offer received :)"
+        "status": "Offer Received"
     }],
     "app_type": "common",
     "recent_date": "Sun, 03 Mar 2019 05:41:45 +0000 (UTC)",
-    "recent_status": "Rejected"
+    "recent_status": "Offer Received"
 }, {
     "domain": "riotgames.com",
     "name": "Riot Games",
@@ -477,27 +477,6 @@ const testData = [{
     }],
     "app_type": "individual",
     "recent_date": "3 Mar 2019 00:37:26 -0500",
-    "recent_status": "Interviewing"
-}, {
-    "domain": "candidates.workablemail.com",
-    "name": "Workable",
-    "logo": "https://logo.clearbit.com/workable.com",
-    "website": "https://candidates.workablemail.com",
-    "location": "Boston, MA",
-    "emails": [{
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "noreply@candidates.workablemail.com",
-            "domain": "candidates.workablemail.com"
-        },
-        "date": "Sun, 03 Mar 2019 05:37:04 +0000",
-        "subject": "Thanks for applying to Jazva",
-        "id": "169420e4561ae9e0",
-        "snippet": "Jazva Your application for the Software Engineer job was submitted successfully. Here&#39;s a copy of your application data for safekeeping: Personal Information Name John Kerr Email impulsappdemo@...",
-        "status": "Interviewing"
-    }],
-    "app_type": "individual",
-    "recent_date": "Sun, 03 Mar 2019 05:37:04 +0000",
     "recent_status": "Interviewing"
 }, {
     "domain": "app.bamboohr.com",
