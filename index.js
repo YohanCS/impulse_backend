@@ -225,8 +225,10 @@ async function analyzeText(res) {
   emailObject.position = arrayOfLines[arrayOfLines.length - 4];
   emailObject.company = arrayOfLines[arrayOfLines.length - 2];
 
-
-  const Url = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyBP-SxuOQvuK2GrB1bnz9OyZgkaMqc05iU&cx=017576662512468239146:omuauf_lfve&q=lectures';
+  search = emailObject.company;
+  let engineID = '005572698672398171083:ivrztdlnswq';
+  let apiKEY = 'AIzaSyD3LznTS-2wAG8JP0AV_2g7HTO94ycY1pM';
+  const Url = `https://www.googleapis.com/customsearch/v1?${apiKEY}&cx=${engineID}&q=${search}`;
   axios.get(Url)
     .then(data => { console.log(data)}).catch( err => { console.log(err) });
 
