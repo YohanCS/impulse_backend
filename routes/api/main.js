@@ -3,6 +3,7 @@ var asyncHandler = require('express-async-handler');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var passport = require('passport');
 var request = require('request');
+var moment = require('moment');
 
 const CLIENT_ID = "177279057869-n5j48p4vn7aucbkvjvcst1qc2j61mgsn.apps.googleusercontent.com";
 const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
@@ -67,6 +68,28 @@ const testData = {
     ]
 };
 
+const LABELS = [{
+        name: "Impuls: Status - Applied",
+        color: "#a4c2f4",
+        messageLabel: "Applied"
+    },
+    {
+        name: "Impuls: Status - Rejected",
+        color: "#fb4c2f",
+        messageLabel: "Rejected"
+    },
+    {
+        name: "Impuls: Status - Interviewing",
+        color: "#434343",
+        messageLabel: "Interviewing"
+    },
+    {
+        name: "Impuls: Status - Offer received :)",
+        color: "#16a766",
+        messageLabel: "Offer received :)"
+    }
+];
+
 passport.use(new GoogleStrategy({
         clientID: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
@@ -74,8 +97,10 @@ passport.use(new GoogleStrategy({
         passReqToCallback: true
     },
     async function (req, accessToken, refreshToken, profile, done) {
-        var emailsList = await getEmailsList(accessToken, profile.id);
-        var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, profile.id, emailsList));
+        await resetLabels(accessToken);
+        var emailsList = await getEmailsList(accessToken);
+        console.log(`ACCESS CODE: ${accessToken}`);
+        var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
         var parsedEmailObjects = getFields(rawEmailObjects);
         var mergedResult = await mergeDomains(parsedEmailObjects);
         done(JSON.stringify(mergedResult));
@@ -94,17 +119,16 @@ router.get('/test_data', function (req, res, next) {
 });
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
-    if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '' && typeof req.query.userId != 'undefined' && req.query.userId != '') {
+    if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '') {
         try {
             var accessCode = req.query.accessCode;
-            var userId = req.query.userId;
-            var emailsList = await getEmailsList(accessCode, userId);
-            var rawEmailObjects = await Promise.all(analyzeEmails(accessCode, userId, emailsList));
+            var emailsList = await getEmailsList(accessCode);
+            var rawEmailObjects = await Promise.all(analyzeEmails(accessCode, emailsList));
             var parsedEmailObjects = getFields(rawEmailObjects);
             var mergedResult = await mergeDomains(parsedEmailObjects);
             res.json(mergedResult);
         } catch (e) {
-            res.status(500).send("Something went wrong. Error! Could be an invalid or expired 'userId' or 'accessCode'?");
+            res.status(500).send("Something went wrong. Error! Could be an invalid or expired 'accessCode' query?");
         }
     } else {
         res.status(404).send(`Missing "accessCode" and/or "userId" query.`);
@@ -116,7 +140,9 @@ router.get('/auth',
         scope: ['https://www.googleapis.com/auth/gmail.readonly',
             'https://www.googleapis.com/auth/gmail.modify',
             'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/userinfo.profile'
+            'https://www.googleapis.com/auth/userinfo.profile',
+            'https://mail.google.com/',
+            'https://www.googleapis.com/auth/gmail.labels'
         ]
     }));
 
@@ -129,10 +155,10 @@ router.get('/callback',
         res.redirect('/');
     });
 
-function getEmailsList(accessToken, profileId) {
+function getEmailsList(accessToken) {
     var options = {
         method: 'GET',
-        url: `https://www.googleapis.com/gmail/v1/users/${profileId}/messages`,
+        url: `https://www.googleapis.com/gmail/v1/users/me/messages`,
         headers: {
             'Authorization': 'Bearer ' + accessToken
         },
@@ -150,12 +176,12 @@ function getEmailsList(accessToken, profileId) {
     });
 }
 
-function analyzeEmails(accessToken, profileId, messageList) {
+function analyzeEmails(accessToken, messageList) {
     var reqs = [];
     messageList.messages.forEach(function (currentMessage) {
         var options = {
             method: 'GET',
-            url: `https://www.googleapis.com/gmail/v1/users/${profileId}/messages/${currentMessage.id}`,
+            url: `https://www.googleapis.com/gmail/v1/users/me/messages/${currentMessage.id}`,
             headers: {
                 'Authorization': 'Bearer ' + accessToken
             },
@@ -198,6 +224,8 @@ function getFields(emailObjects) {
                 ret.date = header.value;
             }
         });
+        ret.id = emailObject.id;
+        ret.snippet = emailObject.snippet + "...";
         ret.status = APP_STATUSES[getRandomInt(4)];
         rets.push(ret);
     }
@@ -210,7 +238,6 @@ async function mergeDomains(emailInfo) {
     var uniqueDomains = uniqueEmails.map(current => current.substring(current.indexOf("@") + 1, current.length));
     uniqueDomains = uniqueDomains.filter(onlyUnique);
     for (var index = 0; index < uniqueDomains.length; index++) {
-        console.log(`STARTING ${index + 1} OUT OF ${uniqueDomains.length}, DOMAIN ${uniqueDomains[index]}`);
         var currentDomain = uniqueDomains[index];
         var current = {};
         current.domain = currentDomain;
@@ -219,7 +246,7 @@ async function mergeDomains(emailInfo) {
         current.logo = domainInfo.logo;
         current.website = "https://" + current.domain;
         try {
-            current.location = `${domainInfo.geo.city}, ${domainInfo.geo.state}`;
+            current.location = `${domainInfo.geo.city}, ${domainInfo.geo.stateCode}`;
         } catch (e) {
             current.location = `U.S.A.`;
         }
@@ -227,8 +254,16 @@ async function mergeDomains(emailInfo) {
             var currentEmail = currentMessage.from.email;
             return emailMatchesDomain(currentEmail, current.domain);
         });
+        current.app_type = current.emails.length >= 5 ? "common" : "individual";
+        current.recent_date = current.emails[0].date;
+        current.recent_status = current.emails[0].status;
+        for (var emailIndex = 1; emailIndex < current.emails.length; emailIndex++) {
+            if (moment(current.emails[emailIndex].date).isAfter(moment(current.recent_date))) {
+                current.recent_date = current.emails[emailIndex].date;
+                current.recent_status = current.emails[emailIndex].status;
+            }
+        }
         finalRet.push(current);
-        console.log(`DONE WITH ${index + 1} OUT OF ${uniqueDomains.length}`);
     }
     return finalRet;
 }
@@ -264,6 +299,106 @@ function getDomainInfo(domain) {
                 reject(error);
             } else {
                 resolve(body);
+            }
+        });
+    });
+}
+
+function addLabel(accessToken, name, color) {
+    var options = {
+        method: 'POST',
+        url: `https://www.googleapis.com/gmail/v1/users/me/labels`,
+        headers: {
+            authorization: 'Bearer ' + accessToken,
+            'content-type': 'application/json'
+        },
+        body: {
+            "labelListVisibility": "labelShow",
+            "messageListVisibility": "show",
+            "name": name,
+            "color": {
+                "backgroundColor": color,
+                "textColor": "#ffffff"
+            }
+        },
+        json: true
+    };
+    return new Promise((resolve, reject) => {
+        request(options, function (error, response, body) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(body);
+                // console.log(JSON.stringify(body.error.errors[0]));
+            }
+        });
+    });
+}
+
+async function resetLabels(accessToken) {
+    var options = {
+        method: 'GET',
+        url: 'https://www.googleapis.com/gmail/v1/users/me/labels',
+        headers: {
+            authorization: 'Bearer ' + accessToken
+        },
+        json: true
+    };
+    var gmailLabels = await new Promise((resolve, reject) => {
+        request(options, function (error, response, body) {
+            if (error)
+                reject(error);
+            else
+                resolve(body);
+        });
+    });
+    const labelsToDelete = gmailLabels.labels.filter(function (currentLabel) {
+        return LABELS.map(current => current.name).indexOf(currentLabel.name) != -1;
+    });
+    var reqs = [];
+    labelsToDelete.forEach(function (current) {
+        reqs.push(new Promise((resolve, reject) => {
+            var options = {
+                method: 'GET',
+                url: 'https://www.googleapis.com/gmail/v1/users/me/messages/' + current.id,
+                headers: {
+                    authorization: 'Bearer ' + accessToken
+                },
+                json: true
+            };
+            request(options, function (error, response, body) {
+                if (error)
+                    reject(error);
+                else
+                    resolve(body);
+            });
+        }));
+    });
+    await Promise.all(reqs);
+    var addLabelRequests = [];
+    LABELS.forEach(function (currentLabel) {
+        addLabelRequests.push(addLabel(accessToken, currentLabel.name, currentLabel.color));
+    });
+    await Promise.all(addLabelRequests);
+}
+
+async function getLabelIds(accessToken) {
+    var options = {
+        method: 'GET',
+        url: 'https://www.googleapis.com/gmail/v1/users/me/labels',
+        headers: {
+            authorization: 'Bearer ya29.GlvBBg86nHqy3Y1Yz60nEqqj-kGBaOqw1njBGvzKt87KuR7_wSFyKHuXmsY_vfo6BwTZ1O_WJukkd7fyZIckWpXuOwbqcfvGGpAc-8VN8dpldOG7dsVwMjcc3Gzg'
+        },
+        json: true
+    };
+    return new Promise((resolve, reject) => {
+        request(options, function (error, response, body) {
+            if (error)
+                reject(error);
+            else {
+                for (var index = 0; index < LABELS.length; index++) {
+
+                }
             }
         });
     });
