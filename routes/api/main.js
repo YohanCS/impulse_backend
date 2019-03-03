@@ -98,17 +98,21 @@ passport.use(new GoogleStrategy({
     },
     async function (req, accessToken, refreshToken, profile, done) {
         try {
-            await resetLabels(accessToken);
-            var emailsList = await getEmailsList(accessToken);
-            console.log(`ACCESS CODE: ${accessToken}`);
-            var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
-            var parsedEmailObjects = getFields(rawEmailObjects);
-            var mergedResult = await mergeDomains(parsedEmailObjects);
-            done(JSON.stringify(mergedResult));
+            done(JSON.stringify(await performSequence(accessToken)));
         } catch (e) {
             done(`Error! Something went wrong. Could it be an invalid or expired 'accessCode' query?`);
         }
     }));
+
+async function performSequence(accessToken) {
+    await resetLabels(accessToken);
+    var emailsList = await getEmailsList(accessToken);
+    console.log(`ACCESS CODE: ${accessToken}`);
+    var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
+    var parsedEmailObjects = getFields(rawEmailObjects);
+    var mergedResult = await mergeDomains(parsedEmailObjects);
+    return JSON.stringify(mergedResult);
+}
 
 router.get('/', function (req, res, next) {
     res.send("This is the main sub-API for Impuls! :)");
@@ -123,20 +127,14 @@ router.get('/test_data', function (req, res, next) {
 });
 
 router.get('/get_emails', asyncHandler(async (req, res, next) => {
-    if (typeof req.query.accessCode != 'undefined' && req.query.accessCode != '') {
+    if (typeof req.query.accessToken != 'undefined' && req.query.accessToken != '') {
         try {
-            await resetLabels(accessToken);
-            var emailsList = await getEmailsList(accessToken);
-            console.log(`ACCESS CODE: ${accessToken}`);
-            var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
-            var parsedEmailObjects = getFields(rawEmailObjects);
-            var mergedResult = await mergeDomains(parsedEmailObjects);
-            done(JSON.stringify(mergedResult));
+            res.json(await performSequence(req.query.accessToken));
         } catch (e) {
-            res.status(500).send(`Error! Something went wrong. Could it be an invalid or expired 'accessCode' query?`);
+            res.status(500).send(`Error! Something went wrong. Could it be an invalid or expired 'accessToken' query?`);
         }
     } else {
-        res.status(404).send(`Missing "accessCode" query.`);
+        res.status(404).send(`Missing 'accessToken' query.`);
     }
 }));
 
@@ -401,9 +399,15 @@ async function getLabelIds(accessToken) {
             if (error)
                 reject(error);
             else {
-                for (var index = 0; index < LABELS.length; index++) {
-
+                var newLabels = LABELS.slice(0);
+                for (var i = 0; i < body.labels.length; i++) {
+                    for (var j = 0; j < newLabels.length; i++) {
+                        if (body.labels[i].name == newLabels[j].name) {
+                            newLabels[j].id = body.labels[i].id;
+                        }
+                    }
                 }
+                resolve(newLabels);
             }
         });
     });
