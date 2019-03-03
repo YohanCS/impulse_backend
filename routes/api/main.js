@@ -12,30 +12,9 @@ var rp = require('request-promise');
 const CLIENT_ID = "177279057869-n5j48p4vn7aucbkvjvcst1qc2j61mgsn.apps.googleusercontent.com";
 const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
 
-const APP_STATUSES = ["Applied", "Rejected", "Interviewing", "Offer received :)"];
+const APP_STATUSES = ["Applied", "Rejected", "Interviewing", "Offer Received"];
 
 const testData = [{
-    "domain": "myworkday.com",
-    "name": "Workday",
-    "logo": "https://logo.clearbit.com/workday.com",
-    "website": "https://myworkday.com",
-    "location": "Pleasanton, CA",
-    "emails": [{
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "ebay@myworkday.com",
-            "domain": "myworkday.com"
-        },
-        "subject": "Thank you for your Application",
-        "date": "Sun,  3 Mar 2019 07:23:27 +0000 (UTC)",
-        "id": "169426faa9ccd9b9",
-        "snippet": "Hi John, Thank you for your interest in Software Engineer, Back End position. A member of our Talent Engagement team is in the process of reviewing your application. You&#39;ll be hearing from them...",
-        "status": "Rejected"
-    }],
-    "app_type": "individual",
-    "recent_date": "Sun,  3 Mar 2019 07:23:27 +0000 (UTC)",
-    "recent_status": "Rejected"
-}, {
     "domain": "google.com",
     "name": "Google",
     "logo": "https://logo.clearbit.com/google.com",
@@ -51,11 +30,11 @@ const testData = [{
         "subject": "Thanks for applying to Google",
         "id": "169426e14e7e6dc2",
         "snippet": "Hi John Kerr, Thanks for applying to Google! There are a ton of great companies out there, so we appreciate your interest in joining our team. While we&#39;re not able to reach out to every applicant,...",
-        "status": "Offer received :)"
+        "status": "Rejected"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 03 Mar 2019 07:21:44 +0000",
-    "recent_status": "Offer received :)"
+    "recent_status": "Rejected"
 }, {
     "domain": "greenhouse.io",
     "name": "Greenhouse Software",
@@ -72,7 +51,7 @@ const testData = [{
         "subject": "What will you build at Roblox?",
         "id": "1694268ecaf48521",
         "snippet": "Hi John, Thank for your interest in the Data Scientist - Payments/Fraud role at Roblox. We&#39;re excited that you want to be a Robloxian and be part of the future of entertainment for all ages. We are...",
-        "status": "Interviewing"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -83,7 +62,7 @@ const testData = [{
         "subject": "Thank you for applying to PlayStation",
         "id": "1694212d806fad35",
         "snippet": "Hi John, Thank you for applying to PlayStation for the Software Engineer II opportunity. Your application has been received and will be reviewed. Please be on the lookout for future correspondence....",
-        "status": "Rejected"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -94,7 +73,7 @@ const testData = [{
         "subject": "Thank you for applying to Bluebeam, Inc.",
         "id": "1694211f1713c074",
         "snippet": "Hi John, Thanks for wanting to join us at Bluebeam! This automated response means the following: • We received your resume! • A human being will read your materials. We promise! We don&#39;t just run...",
-        "status": "Rejected"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -105,7 +84,7 @@ const testData = [{
         "subject": "Thank you for applying to Medely",
         "id": "1694211e8a026724",
         "snippet": "Hi John, Thank you so much for your interest in Medely. We wanted to let you know that we received your application for our Backend Software Engineer position, and we are thrilled that you would...",
-        "status": "Rejected"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -127,7 +106,7 @@ const testData = [{
         "subject": "Thank you for applying to Bluebeam, Inc.",
         "id": "169420d55d66753b",
         "snippet": "Hi John, Thanks for wanting to join us at Bluebeam! This automated response means the following: • We received your resume! • A human being will read your materials. We promise! We don&#39;t just run...",
-        "status": "Rejected"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -138,11 +117,11 @@ const testData = [{
         "subject": "Thank you for applying to ServiceTitan",
         "id": "169420b809f18e52",
         "snippet": "Hello John, Thank you for considering ServiceTitan as the next stop on your career journey. Your application to become a Titan has been received. We think you&#39;ve made a great choice (and we&#39;re...",
-        "status": "Offer received :)"
+        "status": "Applied"
     }],
     "app_type": "common",
     "recent_date": "Sun, 03 Mar 2019 07:16:05 +0000",
-    "recent_status": "Interviewing"
+    "recent_status": "Applied"
 }, {
     "domain": "amazon.jobs",
     "name": "Amazon UK",
@@ -159,7 +138,7 @@ const testData = [{
         "date": "Sun, 3 Mar 2019 07:15:09 +0000",
         "id": "16942680fcdfd913",
         "snippet": "Amazon Hi John, Thanks for applying to Amazon! We&#39;ve received your application for the position of Software Development Engineer, Amazon Studios (ID: 708681). What happens next? If we decide to...",
-        "status": "Rejected"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -170,11 +149,11 @@ const testData = [{
         "date": "Sun, 3 Mar 2019 07:10:53 +0000",
         "id": "169426424ef305bf",
         "snippet": "Amazon Hi John, Thank you for starting an application for the position of Software Development Engineer, Amazon Studios (ID: 708681). There are still a few steps you need to complete. Once your...",
-        "status": "Offer received :)"
+        "status": "Applied"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 3 Mar 2019 07:15:09 +0000",
-    "recent_status": "Rejected"
+    "recent_status": "Applied"
 }, {
     "domain": "jobvite.com",
     "name": "Jobvite",
@@ -191,32 +170,11 @@ const testData = [{
         "subject": "Your application for Software Engineer, Engine at Blizzard Entertainment",
         "id": "1694267047105af1",
         "snippet": "Dear John, Hello and thank you for your interest in Blizzard Entertainment. We see you&#39;ve applied for the position of Software Engineer, Engine - awesome, and good luck! We&#39;ve received your...",
-        "status": "Rejected"
+        "status": "Applied"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 3 Mar 2019 07:14:01 +0000",
-    "recent_status": "Rejected"
-}, {
-    "domain": "mail.amazon.jobs",
-    "name": "Amazon UK",
-    "logo": "https://logo.clearbit.com/amazon.jobs",
-    "website": "https://mail.amazon.jobs",
-    "location": "Seattle, WA",
-    "emails": [{
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "noreply@mail.amazon.jobs",
-            "domain": "mail.amazon.jobs"
-        },
-        "subject": "Welcome to amazon.jobs!",
-        "date": "Sun, 3 Mar 2019 07:09:22 +0000",
-        "id": "1694262c6d3f2a98",
-        "snippet": "Welcome to amazon.jobs! Click here to verify your account. Facebook LinkedIn Instagram Twitter Amazon...",
-        "status": "Interviewing"
-    }],
-    "app_type": "individual",
-    "recent_date": "Sun, 3 Mar 2019 07:09:22 +0000",
-    "recent_status": "Interviewing"
+    "recent_status": "Applied"
 }, {
     "domain": "ceipal.com",
     "name": "CEIPAL",
@@ -233,11 +191,11 @@ const testData = [{
         "date": "Sat, 02 Mar 2019 23:58:26 -0600",
         "id": "1694221d8df0f6c3",
         "snippet": "Career Portal account Activation Request Dear John Kerr, Greetings from Vedainfo Inc! We wanted to let you know that your registration with Vedainfo Inc has been successful. Now you can login to View...",
-        "status": "Rejected"
+        "status": "Applied"
     }],
     "app_type": "individual",
     "recent_date": "Sat, 02 Mar 2019 23:58:26 -0600",
-    "recent_status": "Rejected"
+    "recent_status": "Applied"
 }, {
     "domain": "dice.com",
     "name": "Dice",
@@ -287,7 +245,7 @@ const testData = [{
         "subject": "Application for Dice Job Sr SAP Basis Administrator at Princeton IT Services",
         "id": "169421fe49e67546",
         "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Sr SAP Basis Administrator with Princeton IT Services through Dice. While you wait to hear back, here are a...",
-        "status": "Rejected"
+        "status": "Offer received :)"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -319,7 +277,7 @@ const testData = [{
         "subject": "Application to Sony PlayStation completed. Here''s what to do next.",
         "id": "16942128d7aef5ef",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Sony Playstation Software Engineer II Sony Playstation Your application was submitted at the address we have...",
-        "status": "Interviewing"
+        "status": "Rejected"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -330,7 +288,7 @@ const testData = [{
         "subject": "Application to Bluebeam, Inc. completed. Here''s what to do next.",
         "id": "1694211a47726861",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Bluebeam Software Engineering Manager (Cloud Application) Bluebeam Your application was submitted at the...",
-        "status": "Applied"
+        "status": "Offer received :)"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -341,7 +299,7 @@ const testData = [{
         "subject": "Application to Medely completed. Here''s what to do next.",
         "id": "16942111e92b9829",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Medely Backend Software Engineer Medely Your application was submitted at the address we have for Medely....",
-        "status": "Applied"
+        "status": "Offer received :)"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -363,7 +321,7 @@ const testData = [{
         "subject": "Application to HopSkipDrive completed. Here''s what to do next.",
         "id": "169420e9fadaa40e",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Hopskipdrive Software Engineer Hopskipdrive Your application was submitted at the address we have for...",
-        "status": "Offer received :)"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -374,7 +332,7 @@ const testData = [{
         "subject": "Application to Jazva completed. Here''s what to do next.",
         "id": "169420e418074f84",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Jazva Software Engineer Jazva Your application was submitted at the address we have for Jazva. Following up...",
-        "status": "Applied"
+        "status": "Rejected"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -385,7 +343,7 @@ const testData = [{
         "subject": "Application to The Trade Desk completed. Here''s what to do next.",
         "id": "169420db7de991f8",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted The Trade Desk Software Engineer The Trade Desk Your application was submitted at the address we have for The...",
-        "status": "Interviewing"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -407,7 +365,7 @@ const testData = [{
         "subject": "Application to Bluebeam, Inc. completed. Here''s what to do next.",
         "id": "169420cadb4168be",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Bluebeam Principal Engineer Bluebeam Your application was submitted at the address we have for Bluebeam, Inc.....",
-        "status": "Offer received :)"
+        "status": "Applied"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -440,7 +398,7 @@ const testData = [{
         "subject": "Application to ServiceTitan completed. Here''s what to do next.",
         "id": "169420b2eaf0cd6a",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Servicetitan Software Engineer Servicetitan Your application was submitted at the address we have for...",
-        "status": "Applied"
+        "status": "Interviewing"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -451,7 +409,7 @@ const testData = [{
         "subject": "Application to Net Consensus Inc completed. Here''s what to do next.",
         "id": "169420a3e6abdd00",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Net Consensus Software Developer Net Consensus Your application was submitted at the address we have for Net...",
-        "status": "Interviewing"
+        "status": "Offer received :)"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -462,7 +420,7 @@ const testData = [{
         "subject": "Application to Event Farm completed. Here''s what to do next.",
         "id": "169420a172087842",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Event Farm Full Stack Software Engineer Event Farm Your application was submitted at the address we have for...",
-        "status": "Interviewing"
+        "status": "Rejected"
     }, {
         "to": "impulsappdemo@gmail.com",
         "from": {
@@ -473,11 +431,11 @@ const testData = [{
         "subject": "Application to Optical Zonu Corp completed. Here''s what to do next.",
         "id": "1694209d99aa739e",
         "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Optical Zonu Corp Firmware Engineer Optical Zonu Corp Your application was submitted at the address we have...",
-        "status": "Rejected"
+        "status": "Offer received :)"
     }],
     "app_type": "common",
     "recent_date": "Sun, 03 Mar 2019 05:41:45 +0000 (UTC)",
-    "recent_status": "Interviewing"
+    "recent_status": "Rejected"
 }, {
     "domain": "riotgames.com",
     "name": "Riot Games",
@@ -494,11 +452,11 @@ const testData = [{
         "subject": "Thank you for applying to Software Engineer at Riot Games",
         "id": "1694211090688c96",
         "snippet": "John, Thanks for applying to the Software Engineer position at Riot Games. We&#39;re excited Riot sparked your interest and appreciate the time it takes to craft an application. You&#39;ll hear from us...",
-        "status": "Applied"
+        "status": "Rejected"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 03 Mar 2019 05:40:04 +0000",
-    "recent_status": "Applied"
+    "recent_status": "Rejected"
 }, {
     "domain": "applytojob.com",
     "name": "JazzHR",
@@ -515,11 +473,11 @@ const testData = [{
         "subject": "Your application has been received",
         "id": "169420e9b71d418f",
         "snippet": "Hi John, We have received your application for the HopSkipDrive Software Engineer role! We appreciate you taking time to send your resume and cover letter for our review. We will be reviewing the...",
-        "status": "Offer received :)"
+        "status": "Interviewing"
     }],
     "app_type": "individual",
     "recent_date": "3 Mar 2019 00:37:26 -0500",
-    "recent_status": "Offer received :)"
+    "recent_status": "Interviewing"
 }, {
     "domain": "candidates.workablemail.com",
     "name": "Workable",
@@ -536,11 +494,11 @@ const testData = [{
         "subject": "Thanks for applying to Jazva",
         "id": "169420e4561ae9e0",
         "snippet": "Jazva Your application for the Software Engineer job was submitted successfully. Here&#39;s a copy of your application data for safekeeping: Personal Information Name John Kerr Email impulsappdemo@...",
-        "status": "Offer received :)"
+        "status": "Interviewing"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 03 Mar 2019 05:37:04 +0000",
-    "recent_status": "Offer received :)"
+    "recent_status": "Interviewing"
 }, {
     "domain": "app.bamboohr.com",
     "name": "BambooHR",
@@ -557,11 +515,11 @@ const testData = [{
         "subject": "Thank you for applying at Consilio, LLC",
         "id": "169420c15c97c709",
         "snippet": "Thanks John! We received your application. Thanks John! We received your application. Hi John, Thank you so much for your interest in Consilio, LLC and for taking the time to apply for the Application...",
-        "status": "Rejected"
+        "status": "Interviewing"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 03 Mar 2019 05:34:41 +0000",
-    "recent_status": "Rejected"
+    "recent_status": "Interviewing"
 }, {
     "domain": "invalidemail.com",
     "website": "https://invalidemail.com",
@@ -576,11 +534,11 @@ const testData = [{
         "date": "Sun,  3 Mar 2019 05:30:34 +0000 (UTC)",
         "id": "16942084f550e3e2",
         "snippet": "Thank you for submitting your application for the Software Engineer position. Our team is reviewing your qualifications and will contact you if there is a match with our current open positions. We...",
-        "status": "Rejected"
+        "status": "Applied"
     }],
     "app_type": "individual",
     "recent_date": "Sun,  3 Mar 2019 05:30:34 +0000 (UTC)",
-    "recent_status": "Rejected"
+    "recent_status": "Applied"
 }, {
     "domain": "joshchen.me",
     "website": "https://joshchen.me",
@@ -595,118 +553,10 @@ const testData = [{
         "subject": "Fwd: BlackRock | Application Update",
         "id": "16940dfa812cffab",
         "snippet": "Sent from ProtonMail Mobile ---------- Forwarded message ---------- From: &lt;noreply@blackrock.tal.net&gt; Date: On Sun, Dec 16, 2018 at 5:51 AM Subject: Fwd: BlackRock | Application Update To: &lt;...",
-        "status": "Interviewing"
+        "status": "Rejected"
     }],
     "app_type": "individual",
     "recent_date": "Sun, 03 Mar 2019 00:06:30 +0000",
-    "recent_status": "Interviewing"
-}, {
-    "domain": "uci.edu",
-    "name": "UC Irvine",
-    "logo": "https://logo.clearbit.com/uci.edu",
-    "website": "https://uci.edu",
-    "location": "Irvine, CA",
-    "emails": [{
-        "to": "Impuls Demo <impulsappdemo@gmail.com>",
-        "from": {
-            "email": "lnordahl@uci.edu",
-            "domain": "uci.edu"
-        },
-        "date": "Sat, 2 Mar 2019 13:08:10 -0800",
-        "subject": "Fwd: Thank You From Honey",
-        "id": "169403c85bd729a4",
-        "snippet": "---------- Forwarded message --------- From: &lt;no-reply@greenhouse.io&gt; Date: Thu, Oct 25, 2018 at 12:31 PM Subject: Thank You From Honey To: &lt;lnordahl@uci.edu&gt; Hi Lasse, Thanks for taking...",
-        "status": "Applied"
-    }, {
-        "to": "Impuls Demo <impulsappdemo@gmail.com>",
-        "from": {
-            "email": "lnordahl@uci.edu",
-            "domain": "uci.edu"
-        },
-        "subject": "Fwd: Technip Application for Position of Intern Software Engineer",
-        "date": "Sat, 2 Mar 2019 11:16:54 -0800",
-        "id": "1693fd6805714f04",
-        "snippet": "&gt; Begin forwarded message: &gt; &gt; From: Human Resources &gt; Subject: Technip Application for Position of Intern Software Engineer &gt; Date: March 1, 2019 at 12:47:07 PM PST &gt; To: lnordahl@...",
-        "status": "Interviewing"
-    }, {
-        "to": "Impuls Demo <impulsappdemo@gmail.com>",
-        "from": {
-            "email": "lnordahl@uci.edu",
-            "domain": "uci.edu"
-        },
-        "subject": "Re: Your application for Front End/Web Developer - Summer Internship - Boston at Spotify.",
-        "date": "Sat, 2 Mar 2019 11:16:21 -0800",
-        "id": "1693fd5fe46fa76e",
-        "snippet": "On Jan 12, 2019, at 12:00 PM, Spotify Recruiting Team &lt;no-reply@jobvite.com&gt; wrote: Hi Lasse, Thank you for applying for the Front End/Web Developer - Summer Internship - Boston position. There...",
-        "status": "Offer received :)"
-    }, {
-        "to": "Impuls Demo <impulsappdemo@gmail.com>",
-        "from": {
-            "email": "lnordahl@uci.edu",
-            "domain": "uci.edu"
-        },
-        "subject": "Fwd: Your application for Front End/Web Developer - Summer Internship - New York at Spotify.",
-        "date": "Sat, 2 Mar 2019 11:16:08 -0800",
-        "id": "1693fd5d379a58d9",
-        "snippet": "Begin forwarded message: From: Spotify Recruiting Team &lt;no-reply@jobvite.com&gt; Subject: Your application for Front End/Web Developer - Summer Internship - New York at Spotify. Date: January 12,...",
-        "status": "Rejected"
-    }],
-    "app_type": "individual",
-    "recent_date": "Sat, 2 Mar 2019 13:08:10 -0800",
-    "recent_status": "Applied"
-}, {
-    "domain": "ucsd.edu",
-    "name": "UC San Diego #TritonPride",
-    "logo": null,
-    "website": "https://ucsd.edu",
-    "location": "San Diego, CA",
-    "emails": [{
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "yhezkiya@ucsd.edu",
-            "domain": "ucsd.edu"
-        },
-        "date": "Sat, 2 Mar 2019 01:07:06 -0800",
-        "subject": "Fwd: Regarding your application to Qualtrics",
-        "id": "1693da861b208a29",
-        "snippet": "---------- Forwarded message --------- From: &lt;recruiting1@qualtrics.com&gt; Date: Thu, Feb 28, 2019 at 2:33 PM Subject: Regarding your application to Qualtrics To: &lt;yhezkiya@ucsd.edu&gt;...",
-        "status": "Rejected"
-    }, {
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "yhezkiya@ucsd.edu",
-            "domain": "ucsd.edu"
-        },
-        "date": "Sat, 2 Mar 2019 01:03:41 -0800",
-        "subject": "Fwd: Seismic - Thank you",
-        "id": "1693da540d05f3ae",
-        "snippet": "---------- Forwarded message --------- From: Jaime Onofre &lt;jonofre@seismic.com&gt; Date: Mon, Feb 11, 2019 at 10:15 AM Subject: Seismic - Thank you To: yhezkiya@ucsd.edu &lt;yhezkiya@ucsd.edu&gt; Hi...",
-        "status": "Applied"
-    }, {
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "yhezkiya@ucsd.edu",
-            "domain": "ucsd.edu"
-        },
-        "date": "Sat, 2 Mar 2019 01:01:58 -0800",
-        "subject": "Fwd: From the D. E. Shaw group",
-        "id": "1693da3ae42ef15a",
-        "snippet": "---------- Forwarded message --------- From: &lt;recruiting@deshaw.com&gt; Date: Fri, Feb 22, 2019 at 5:31 AM Subject: From the DE Shaw group To: &lt;yhezkiya@ucsd.edu&gt; Cc: &lt;sgrowth@deshaw.com...",
-        "status": "Rejected"
-    }, {
-        "to": "impulsappdemo@gmail.com",
-        "from": {
-            "email": "yhezkiya@ucsd.edu",
-            "domain": "ucsd.edu"
-        },
-        "date": "Sat, 2 Mar 2019 01:01:06 -0800",
-        "subject": "Fwd: Your IBM Application Status",
-        "id": "1693da2e1029fbf9",
-        "snippet": "---------- Forwarded message --------- From: IBMRecruitment_noreply &lt;Enterprise@trm.brassring.com&gt; Date: Mon, Feb 25, 2019 at 2:15 PM Subject: Your IBM Application Status To: &lt;yhezkiya@ucsd....",
-        "status": "Applied"
-    }],
-    "app_type": "individual",
-    "recent_date": "Sat, 2 Mar 2019 01:07:06 -0800",
     "recent_status": "Rejected"
 }];
 
@@ -726,9 +576,9 @@ const LABELS = [{
         messageLabel: "Interviewing"
     },
     {
-        name: "Impuls: Status - Offer received :)",
+        name: "Impuls: Status - Offer Received",
         color: "#16a766",
-        messageLabel: "Offer received :)"
+        messageLabel: "Offer Received"
     }
 ];
 
@@ -912,6 +762,7 @@ async function mergeDomains(emailInfo) {
     var uniqueEmails = emailInfo.map(current => current.from.email).filter(onlyUnique);
     var uniqueDomains = uniqueEmails.map(current => current.substring(current.indexOf("@") + 1, current.length));
     uniqueDomains = uniqueDomains.filter(onlyUnique);
+    var reqs = [];
     for (var index = 0; index < uniqueDomains.length; index++) {
         var currentDomain = uniqueDomains[index];
         var current = {};
