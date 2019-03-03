@@ -14,63 +14,701 @@ const CLIENT_SECRET = "G-nCcH6MBOstMSgLqDTKwiRX";
 
 const APP_STATUSES = ["Applied", "Rejected", "Interviewing", "Offer received :)"];
 
-const testData = {
-    internshipObjects: [{
-            name: "Amazon",
-            domain: "amazon.com",
-            role: "SWE Intern",
-            status: "Accepted"
+const testData = [{
+    "domain": "myworkday.com",
+    "name": "Workday",
+    "logo": "https://logo.clearbit.com/workday.com",
+    "website": "https://myworkday.com",
+    "location": "Pleasanton, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "ebay@myworkday.com",
+            "domain": "myworkday.com"
         },
-        {
-            name: "Honey",
-            domain: "joinhoney.com",
-            role: "SWE Intern",
-            status: "Interview"
+        "subject": "Thank you for your Application",
+        "date": "Sun,  3 Mar 2019 07:23:27 +0000 (UTC)",
+        "id": "169426faa9ccd9b9",
+        "snippet": "Hi John, Thank you for your interest in Software Engineer, Back End position. A member of our Talent Engagement team is in the process of reviewing your application. You&#39;ll be hearing from them...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun,  3 Mar 2019 07:23:27 +0000 (UTC)",
+    "recent_status": "Rejected"
+}, {
+    "domain": "google.com",
+    "name": "Google",
+    "logo": "https://logo.clearbit.com/google.com",
+    "website": "https://google.com",
+    "location": "Mountain View, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@google.com",
+            "domain": "google.com"
         },
-        {
-            name: "Facebook",
-            domain: "facebook.com",
-            role: "SWE Intern",
-            status: "Rejected"
+        "date": "Sun, 03 Mar 2019 07:21:44 +0000",
+        "subject": "Thanks for applying to Google",
+        "id": "169426e14e7e6dc2",
+        "snippet": "Hi John Kerr, Thanks for applying to Google! There are a ton of great companies out there, so we appreciate your interest in joining our team. While we&#39;re not able to reach out to every applicant,...",
+        "status": "Offer received :)"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 03 Mar 2019 07:21:44 +0000",
+    "recent_status": "Offer received :)"
+}, {
+    "domain": "greenhouse.io",
+    "name": "Greenhouse Software",
+    "logo": "https://logo.clearbit.com/greenhouse.io",
+    "website": "https://greenhouse.io",
+    "location": "New York, NY",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Spotify",
-            domain: "spotify.com",
-            role: "SWE Intern",
-            status: "Applied"
+        "date": "Sun, 03 Mar 2019 07:16:05 +0000",
+        "subject": "What will you build at Roblox?",
+        "id": "1694268ecaf48521",
+        "snippet": "Hi John, Thank for your interest in the Data Scientist - Payments/Fraud role at Roblox. We&#39;re excited that you want to be a Robloxian and be part of the future of entertainment for all ages. We are...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Honey",
-            domain: "joinhoney.com",
-            role: "SWE Intern",
-            status: "Interview"
+        "date": "Sun, 03 Mar 2019 05:42:04 +0000",
+        "subject": "Thank you for applying to PlayStation",
+        "id": "1694212d806fad35",
+        "snippet": "Hi John, Thank you for applying to PlayStation for the Software Engineer II opportunity. Your application has been received and will be reviewed. Please be on the lookout for future correspondence....",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Facebook",
-            domain: "facebook.com",
-            role: "SWE Intern",
-            status: "Rejected"
+        "date": "Sun, 03 Mar 2019 05:41:04 +0000",
+        "subject": "Thank you for applying to Bluebeam, Inc.",
+        "id": "1694211f1713c074",
+        "snippet": "Hi John, Thanks for wanting to join us at Bluebeam! This automated response means the following: • We received your resume! • A human being will read your materials. We promise! We don&#39;t just run...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Spotify",
-            domain: "spotify.com",
-            role: "SWE Intern",
-            status: "Applied"
+        "date": "Sun, 03 Mar 2019 05:41:03 +0000",
+        "subject": "Thank you for applying to Medely",
+        "id": "1694211e8a026724",
+        "snippet": "Hi John, Thank you so much for your interest in Medely. We wanted to let you know that we received your application for our Backend Software Engineer position, and we are thrilled that you would...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Facebook",
-            domain: "facebook.com",
-            role: "SWE Intern",
-            status: "Rejected"
+        "date": "Sun, 03 Mar 2019 05:37:04 +0000",
+        "subject": "Thank you for applying to The Trade Desk",
+        "id": "169420e42ebf8ae6",
+        "snippet": "Hi John, Thank you for your interest in The Trade Desk! We appreciate you taking the time to apply for this role, and look forward to reviewing your application. Here&#39;s what you can expect from us:...",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
         },
-        {
-            name: "Spotify",
-            domain: "spotify.com",
-            role: "SWE Intern",
-            status: "Applied"
-        }
-    ]
-};
+        "date": "Sun, 03 Mar 2019 05:36:03 +0000",
+        "subject": "Thank you for applying to Bluebeam, Inc.",
+        "id": "169420d55d66753b",
+        "snippet": "Hi John, Thanks for wanting to join us at Bluebeam! This automated response means the following: • We received your resume! • A human being will read your materials. We promise! We don&#39;t just run...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@greenhouse.io",
+            "domain": "greenhouse.io"
+        },
+        "date": "Sun, 03 Mar 2019 05:34:03 +0000",
+        "subject": "Thank you for applying to ServiceTitan",
+        "id": "169420b809f18e52",
+        "snippet": "Hello John, Thank you for considering ServiceTitan as the next stop on your career journey. Your application to become a Titan has been received. We think you&#39;ve made a great choice (and we&#39;re...",
+        "status": "Offer received :)"
+    }],
+    "app_type": "common",
+    "recent_date": "Sun, 03 Mar 2019 07:16:05 +0000",
+    "recent_status": "Interviewing"
+}, {
+    "domain": "amazon.jobs",
+    "name": "Amazon UK",
+    "logo": "https://logo.clearbit.com/amazon.jobs",
+    "website": "https://amazon.jobs",
+    "location": "Seattle, WA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@amazon.jobs",
+            "domain": "amazon.jobs"
+        },
+        "subject": "Thank you for applying to Amazon",
+        "date": "Sun, 3 Mar 2019 07:15:09 +0000",
+        "id": "16942680fcdfd913",
+        "snippet": "Amazon Hi John, Thanks for applying to Amazon! We&#39;ve received your application for the position of Software Development Engineer, Amazon Studios (ID: 708681). What happens next? If we decide to...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@amazon.jobs",
+            "domain": "amazon.jobs"
+        },
+        "subject": "You've started your Amazon job application",
+        "date": "Sun, 3 Mar 2019 07:10:53 +0000",
+        "id": "169426424ef305bf",
+        "snippet": "Amazon Hi John, Thank you for starting an application for the position of Software Development Engineer, Amazon Studios (ID: 708681). There are still a few steps you need to complete. Once your...",
+        "status": "Offer received :)"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 3 Mar 2019 07:15:09 +0000",
+    "recent_status": "Rejected"
+}, {
+    "domain": "jobvite.com",
+    "name": "Jobvite",
+    "logo": "https://logo.clearbit.com/jobvite.com",
+    "website": "https://jobvite.com",
+    "location": "San Mateo, CA",
+    "emails": [{
+        "to": "John Kerr <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "notification@jobvite.com",
+            "domain": "jobvite.com"
+        },
+        "date": "Sun, 3 Mar 2019 07:14:01 +0000",
+        "subject": "Your application for Software Engineer, Engine at Blizzard Entertainment",
+        "id": "1694267047105af1",
+        "snippet": "Dear John, Hello and thank you for your interest in Blizzard Entertainment. We see you&#39;ve applied for the position of Software Engineer, Engine - awesome, and good luck! We&#39;ve received your...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 3 Mar 2019 07:14:01 +0000",
+    "recent_status": "Rejected"
+}, {
+    "domain": "mail.amazon.jobs",
+    "name": "Amazon UK",
+    "logo": "https://logo.clearbit.com/amazon.jobs",
+    "website": "https://mail.amazon.jobs",
+    "location": "Seattle, WA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@mail.amazon.jobs",
+            "domain": "mail.amazon.jobs"
+        },
+        "subject": "Welcome to amazon.jobs!",
+        "date": "Sun, 3 Mar 2019 07:09:22 +0000",
+        "id": "1694262c6d3f2a98",
+        "snippet": "Welcome to amazon.jobs! Click here to verify your account. Facebook LinkedIn Instagram Twitter Amazon...",
+        "status": "Interviewing"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 3 Mar 2019 07:09:22 +0000",
+    "recent_status": "Interviewing"
+}, {
+    "domain": "ceipal.com",
+    "name": "CEIPAL",
+    "logo": "https://logo.clearbit.com/ceipal.com",
+    "website": "https://ceipal.com",
+    "location": "Rochester, NY",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@ceipal.com",
+            "domain": "ceipal.com"
+        },
+        "subject": "Career Portal Registration Successful",
+        "date": "Sat, 02 Mar 2019 23:58:26 -0600",
+        "id": "1694221d8df0f6c3",
+        "snippet": "Career Portal account Activation Request Dear John Kerr, Greetings from Vedainfo Inc! We wanted to let you know that your registration with Vedainfo Inc has been successful. Now you can login to View...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sat, 02 Mar 2019 23:58:26 -0600",
+    "recent_status": "Rejected"
+}, {
+    "domain": "dice.com",
+    "name": "Dice",
+    "logo": "https://logo.clearbit.com/dice.com",
+    "website": "https://dice.com",
+    "location": "San Jose, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "applyonline@dice.com",
+            "domain": "dice.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:57:35 +0000",
+        "subject": "Application for Dice Job Independent Consultant || Tableau Consultant (Redshift Experience) at Innovizant LLC",
+        "id": "16942210bd3d5091",
+        "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Independent Consultant || Tableau Consultant (Redshift Experience) with Innovizant LLC through Dice. While you...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "applyonline@dice.com",
+            "domain": "dice.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:57:33 +0000",
+        "subject": "Application for Dice Job Business Analyst/Quality Analyst at Mobilyte",
+        "id": "16942210578ad966",
+        "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Business Analyst/Quality Analyst with Mobilyte through Dice. While you wait to hear back, here are a few other...",
+        "status": "Offer received :)"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "applyonline@dice.com",
+            "domain": "dice.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:56:42 +0000",
+        "subject": "Application for Dice Job JAVA developer for San Jose, CA at Canvas InfoTech Inc.",
+        "id": "16942203a49550d4",
+        "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of JAVA developer for San Jose, CA with Canvas InfoTech Inc. through Dice. While you wait to hear back, here are...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "applyonline@dice.com",
+            "domain": "dice.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:56:19 +0000",
+        "subject": "Application for Dice Job Sr SAP Basis Administrator at Princeton IT Services",
+        "id": "169421fe49e67546",
+        "snippet": "Dice The career hub for tech Application Submitted Thanks for applying for the position of Sr SAP Basis Administrator with Princeton IT Services through Dice. While you wait to hear back, here are a...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@dice.com",
+            "domain": "dice.com"
+        },
+        "subject": "Dice.com: Please verify your e-mail address",
+        "date": "Sat,  2 Mar 2019 23:55:34 -0600 (CST)",
+        "id": "169421f368c2fafe",
+        "snippet": "Be more visible to employers Dice Career Connection Please verify your Dice email address to make your profile more visible to employers by clicking the button below. Verify Your Email Button not...",
+        "status": "Applied"
+    }],
+    "app_type": "common",
+    "recent_date": "Sun, 03 Mar 2019 05:57:35 +0000",
+    "recent_status": "Interviewing"
+}, {
+    "domain": "glassdoor.com",
+    "name": "Glassdoor",
+    "logo": "https://logo.clearbit.com/glassdoor.com",
+    "website": "https://glassdoor.com",
+    "location": "Mill Valley, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:41:45 +0000 (UTC)",
+        "subject": "Application to Sony PlayStation completed. Here''s what to do next.",
+        "id": "16942128d7aef5ef",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Sony Playstation Software Engineer II Sony Playstation Your application was submitted at the address we have...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:40:46 +0000 (UTC)",
+        "subject": "Application to Bluebeam, Inc. completed. Here''s what to do next.",
+        "id": "1694211a47726861",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Bluebeam Software Engineering Manager (Cloud Application) Bluebeam Your application was submitted at the...",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:40:11 +0000 (UTC)",
+        "subject": "Application to Medely completed. Here''s what to do next.",
+        "id": "16942111e92b9829",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Medely Backend Software Engineer Medely Your application was submitted at the address we have for Medely....",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:39:43 +0000 (UTC)",
+        "subject": "Application to Riot Games completed. Here''s what to do next.",
+        "id": "1694210b0ba8ef3b",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Riot Games Software Engineer Riot Games Your application was submitted at the address we have for Riot Games....",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:37:27 +0000 (UTC)",
+        "subject": "Application to HopSkipDrive completed. Here''s what to do next.",
+        "id": "169420e9fadaa40e",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Hopskipdrive Software Engineer Hopskipdrive Your application was submitted at the address we have for...",
+        "status": "Offer received :)"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:37:03 +0000 (UTC)",
+        "subject": "Application to Jazva completed. Here''s what to do next.",
+        "id": "169420e418074f84",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Jazva Software Engineer Jazva Your application was submitted at the address we have for Jazva. Following up...",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:36:28 +0000 (UTC)",
+        "subject": "Application to The Trade Desk completed. Here''s what to do next.",
+        "id": "169420db7de991f8",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted The Trade Desk Software Engineer The Trade Desk Your application was submitted at the address we have for The...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:35:35 +0000 (UTC)",
+        "subject": "Application to Shinetech completed. Here''s what to do next.",
+        "id": "169420ce6a6f1e6c",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Shinetech .NET Developer Shinetech Your application was submitted at the address we have for Shinetech....",
+        "status": "Offer received :)"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:35:20 +0000 (UTC)",
+        "subject": "Application to Bluebeam, Inc. completed. Here''s what to do next.",
+        "id": "169420cadb4168be",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Bluebeam Principal Engineer Bluebeam Your application was submitted at the address we have for Bluebeam, Inc.....",
+        "status": "Offer received :)"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:34:38 +0000 (UTC)",
+        "subject": "Application to Consilio, LLC completed. Here''s what to do next.",
+        "id": "169420c0beb7a9ad",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Consilio Application Support Engineer Consilio Your application was submitted at the address we have for...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:33:55 +0000 (UTC)",
+        "subject": "Application to Morley Builders completed. Here''s what to do next.",
+        "id": "169420b60756acbf",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Morley Builders Project Engineer Morley Builders Your application was submitted at the address we have for...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:33:42 +0000 (UTC)",
+        "subject": "Application to ServiceTitan completed. Here''s what to do next.",
+        "id": "169420b2eaf0cd6a",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Servicetitan Software Engineer Servicetitan Your application was submitted at the address we have for...",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:32:40 +0000 (UTC)",
+        "subject": "Application to Net Consensus Inc completed. Here''s what to do next.",
+        "id": "169420a3e6abdd00",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Net Consensus Software Developer Net Consensus Your application was submitted at the address we have for Net...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:32:30 +0000 (UTC)",
+        "subject": "Application to Event Farm completed. Here''s what to do next.",
+        "id": "169420a172087842",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Event Farm Full Stack Software Engineer Event Farm Your application was submitted at the address we have for...",
+        "status": "Interviewing"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@glassdoor.com",
+            "domain": "glassdoor.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:32:14 +0000 (UTC)",
+        "subject": "Application to Optical Zonu Corp completed. Here''s what to do next.",
+        "id": "1694209d99aa739e",
+        "snippet": "Give yourself the best chance to land a great job Glassdoor Your application was submitted Optical Zonu Corp Firmware Engineer Optical Zonu Corp Your application was submitted at the address we have...",
+        "status": "Rejected"
+    }],
+    "app_type": "common",
+    "recent_date": "Sun, 03 Mar 2019 05:41:45 +0000 (UTC)",
+    "recent_status": "Interviewing"
+}, {
+    "domain": "riotgames.com",
+    "name": "Riot Games",
+    "logo": "https://logo.clearbit.com/riotgames.com",
+    "website": "https://riotgames.com",
+    "location": "Los Angeles, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "no-reply@riotgames.com",
+            "domain": "riotgames.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:40:04 +0000",
+        "subject": "Thank you for applying to Software Engineer at Riot Games",
+        "id": "1694211090688c96",
+        "snippet": "John, Thanks for applying to the Software Engineer position at Riot Games. We&#39;re excited Riot sparked your interest and appreciate the time it takes to craft an application. You&#39;ll hear from us...",
+        "status": "Applied"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 03 Mar 2019 05:40:04 +0000",
+    "recent_status": "Applied"
+}, {
+    "domain": "applytojob.com",
+    "name": "JazzHR",
+    "logo": "https://logo.clearbit.com/jazzhr.com",
+    "website": "https://applytojob.com",
+    "location": "Pittsburgh, PA",
+    "emails": [{
+        "to": "John Kerr <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "noreply@applytojob.com",
+            "domain": "applytojob.com"
+        },
+        "date": "3 Mar 2019 00:37:26 -0500",
+        "subject": "Your application has been received",
+        "id": "169420e9b71d418f",
+        "snippet": "Hi John, We have received your application for the HopSkipDrive Software Engineer role! We appreciate you taking time to send your resume and cover letter for our review. We will be reviewing the...",
+        "status": "Offer received :)"
+    }],
+    "app_type": "individual",
+    "recent_date": "3 Mar 2019 00:37:26 -0500",
+    "recent_status": "Offer received :)"
+}, {
+    "domain": "candidates.workablemail.com",
+    "name": "Workable",
+    "logo": "https://logo.clearbit.com/workable.com",
+    "website": "https://candidates.workablemail.com",
+    "location": "Boston, MA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "noreply@candidates.workablemail.com",
+            "domain": "candidates.workablemail.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:37:04 +0000",
+        "subject": "Thanks for applying to Jazva",
+        "id": "169420e4561ae9e0",
+        "snippet": "Jazva Your application for the Software Engineer job was submitted successfully. Here&#39;s a copy of your application data for safekeeping: Personal Information Name John Kerr Email impulsappdemo@...",
+        "status": "Offer received :)"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 03 Mar 2019 05:37:04 +0000",
+    "recent_status": "Offer received :)"
+}, {
+    "domain": "app.bamboohr.com",
+    "name": "BambooHR",
+    "logo": "https://logo.clearbit.com/bamboohr.com",
+    "website": "https://app.bamboohr.com",
+    "location": "Lindon, UT",
+    "emails": [{
+        "to": "John Kerr <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "notifications@app.bamboohr.com",
+            "domain": "app.bamboohr.com"
+        },
+        "date": "Sun, 03 Mar 2019 05:34:41 +0000",
+        "subject": "Thank you for applying at Consilio, LLC",
+        "id": "169420c15c97c709",
+        "snippet": "Thanks John! We received your application. Thanks John! We received your application. Hi John, Thank you so much for your interest in Consilio, LLC and for taking the time to apply for the Application...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 03 Mar 2019 05:34:41 +0000",
+    "recent_status": "Rejected"
+}, {
+    "domain": "invalidemail.com",
+    "website": "https://invalidemail.com",
+    "location": "U.S.A.",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "donotreply@invalidemail.com",
+            "domain": "invalidemail.com"
+        },
+        "subject": "Thank you from Green Dot Corp.",
+        "date": "Sun,  3 Mar 2019 05:30:34 +0000 (UTC)",
+        "id": "16942084f550e3e2",
+        "snippet": "Thank you for submitting your application for the Software Engineer position. Our team is reviewing your qualifications and will contact you if there is a match with our current open positions. We...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun,  3 Mar 2019 05:30:34 +0000 (UTC)",
+    "recent_status": "Rejected"
+}, {
+    "domain": "joshchen.me",
+    "website": "https://joshchen.me",
+    "location": "U.S.A.",
+    "emails": [{
+        "to": "\"impulsappdemo@gmail.com\" <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "josh@joshchen.me",
+            "domain": "joshchen.me"
+        },
+        "date": "Sun, 03 Mar 2019 00:06:30 +0000",
+        "subject": "Fwd: BlackRock | Application Update",
+        "id": "16940dfa812cffab",
+        "snippet": "Sent from ProtonMail Mobile ---------- Forwarded message ---------- From: &lt;noreply@blackrock.tal.net&gt; Date: On Sun, Dec 16, 2018 at 5:51 AM Subject: Fwd: BlackRock | Application Update To: &lt;...",
+        "status": "Interviewing"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sun, 03 Mar 2019 00:06:30 +0000",
+    "recent_status": "Interviewing"
+}, {
+    "domain": "uci.edu",
+    "name": "UC Irvine",
+    "logo": "https://logo.clearbit.com/uci.edu",
+    "website": "https://uci.edu",
+    "location": "Irvine, CA",
+    "emails": [{
+        "to": "Impuls Demo <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "lnordahl@uci.edu",
+            "domain": "uci.edu"
+        },
+        "date": "Sat, 2 Mar 2019 13:08:10 -0800",
+        "subject": "Fwd: Thank You From Honey",
+        "id": "169403c85bd729a4",
+        "snippet": "---------- Forwarded message --------- From: &lt;no-reply@greenhouse.io&gt; Date: Thu, Oct 25, 2018 at 12:31 PM Subject: Thank You From Honey To: &lt;lnordahl@uci.edu&gt; Hi Lasse, Thanks for taking...",
+        "status": "Applied"
+    }, {
+        "to": "Impuls Demo <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "lnordahl@uci.edu",
+            "domain": "uci.edu"
+        },
+        "subject": "Fwd: Technip Application for Position of Intern Software Engineer",
+        "date": "Sat, 2 Mar 2019 11:16:54 -0800",
+        "id": "1693fd6805714f04",
+        "snippet": "&gt; Begin forwarded message: &gt; &gt; From: Human Resources &gt; Subject: Technip Application for Position of Intern Software Engineer &gt; Date: March 1, 2019 at 12:47:07 PM PST &gt; To: lnordahl@...",
+        "status": "Interviewing"
+    }, {
+        "to": "Impuls Demo <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "lnordahl@uci.edu",
+            "domain": "uci.edu"
+        },
+        "subject": "Re: Your application for Front End/Web Developer - Summer Internship - Boston at Spotify.",
+        "date": "Sat, 2 Mar 2019 11:16:21 -0800",
+        "id": "1693fd5fe46fa76e",
+        "snippet": "On Jan 12, 2019, at 12:00 PM, Spotify Recruiting Team &lt;no-reply@jobvite.com&gt; wrote: Hi Lasse, Thank you for applying for the Front End/Web Developer - Summer Internship - Boston position. There...",
+        "status": "Offer received :)"
+    }, {
+        "to": "Impuls Demo <impulsappdemo@gmail.com>",
+        "from": {
+            "email": "lnordahl@uci.edu",
+            "domain": "uci.edu"
+        },
+        "subject": "Fwd: Your application for Front End/Web Developer - Summer Internship - New York at Spotify.",
+        "date": "Sat, 2 Mar 2019 11:16:08 -0800",
+        "id": "1693fd5d379a58d9",
+        "snippet": "Begin forwarded message: From: Spotify Recruiting Team &lt;no-reply@jobvite.com&gt; Subject: Your application for Front End/Web Developer - Summer Internship - New York at Spotify. Date: January 12,...",
+        "status": "Rejected"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sat, 2 Mar 2019 13:08:10 -0800",
+    "recent_status": "Applied"
+}, {
+    "domain": "ucsd.edu",
+    "name": "UC San Diego #TritonPride",
+    "logo": null,
+    "website": "https://ucsd.edu",
+    "location": "San Diego, CA",
+    "emails": [{
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "yhezkiya@ucsd.edu",
+            "domain": "ucsd.edu"
+        },
+        "date": "Sat, 2 Mar 2019 01:07:06 -0800",
+        "subject": "Fwd: Regarding your application to Qualtrics",
+        "id": "1693da861b208a29",
+        "snippet": "---------- Forwarded message --------- From: &lt;recruiting1@qualtrics.com&gt; Date: Thu, Feb 28, 2019 at 2:33 PM Subject: Regarding your application to Qualtrics To: &lt;yhezkiya@ucsd.edu&gt;...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "yhezkiya@ucsd.edu",
+            "domain": "ucsd.edu"
+        },
+        "date": "Sat, 2 Mar 2019 01:03:41 -0800",
+        "subject": "Fwd: Seismic - Thank you",
+        "id": "1693da540d05f3ae",
+        "snippet": "---------- Forwarded message --------- From: Jaime Onofre &lt;jonofre@seismic.com&gt; Date: Mon, Feb 11, 2019 at 10:15 AM Subject: Seismic - Thank you To: yhezkiya@ucsd.edu &lt;yhezkiya@ucsd.edu&gt; Hi...",
+        "status": "Applied"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "yhezkiya@ucsd.edu",
+            "domain": "ucsd.edu"
+        },
+        "date": "Sat, 2 Mar 2019 01:01:58 -0800",
+        "subject": "Fwd: From the D. E. Shaw group",
+        "id": "1693da3ae42ef15a",
+        "snippet": "---------- Forwarded message --------- From: &lt;recruiting@deshaw.com&gt; Date: Fri, Feb 22, 2019 at 5:31 AM Subject: From the DE Shaw group To: &lt;yhezkiya@ucsd.edu&gt; Cc: &lt;sgrowth@deshaw.com...",
+        "status": "Rejected"
+    }, {
+        "to": "impulsappdemo@gmail.com",
+        "from": {
+            "email": "yhezkiya@ucsd.edu",
+            "domain": "ucsd.edu"
+        },
+        "date": "Sat, 2 Mar 2019 01:01:06 -0800",
+        "subject": "Fwd: Your IBM Application Status",
+        "id": "1693da2e1029fbf9",
+        "snippet": "---------- Forwarded message --------- From: IBMRecruitment_noreply &lt;Enterprise@trm.brassring.com&gt; Date: Mon, Feb 25, 2019 at 2:15 PM Subject: Your IBM Application Status To: &lt;yhezkiya@ucsd....",
+        "status": "Applied"
+    }],
+    "app_type": "individual",
+    "recent_date": "Sat, 2 Mar 2019 01:07:06 -0800",
+    "recent_status": "Rejected"
+}];
 
 const LABELS = [{
         name: "Impuls: Status - Applied",
@@ -115,9 +753,11 @@ async function performSequence(accessToken) {
     var emailsList = await getEmailsList(accessToken);
     var rawEmailObjects = await Promise.all(analyzeEmails(accessToken, emailsList));
     var parsedEmailObjects = getFields(rawEmailObjects);
-    var labelIds = await getLabelIds(accessToken);
-    var labelEmailReqs = labelEmails(accessToken, parsedEmailObjects, labelIds);
-    await Promise.all(labelEmailReqs);
+
+    // var labelIds = await getLabelIds(accessToken);
+    // var labelEmailReqs = labelEmails(accessToken, parsedEmailObjects, labelIds);
+    // await Promise.all(labelEmailReqs);
+
     var mergedResult = await mergeDomains(parsedEmailObjects);
     return mergedResult;
 }
@@ -162,7 +802,7 @@ router.get('/get_emails', asyncHandler(async (req, res, next) => {
         try {
             res.json(await performSequence(req.query.accessToken));
         } catch (e) {
-            console.log(e);
+            console.log("HERE: " + e);
             res.status(500).send(`Error! Something went wrong. Could it be an invalid or expired 'accessToken' query?`);
         }
     } else {
