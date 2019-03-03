@@ -68,3 +68,4 @@ token.json
 CloudCredentials.json
 
 .jshintrc
+package-lock.json
