@@ -4,6 +4,7 @@ const {google} = require('googleapis');
 //Import the Google Cloud Natural language Processing library
 const language = require('@google-cloud/language');
 const languageClient = new language.LanguageServiceClient();
+const Request = require('Request');
 
 //TRYING OUT NATURAL LANGUAGE PROCESSING FOR ORGANIZATIONS
 var nlp = require('compromise')
@@ -221,7 +222,6 @@ async function analyzeText(res) {
   }
 
   arrayOfLines = text.split('\n');
-  console.log(arrayOfLines[arrayOfLines.length - 2]);
   emailObject.position = arrayOfLines[arrayOfLines.length - 4];
   emailObject.company = arrayOfLines[arrayOfLines.length - 2];
 
@@ -229,8 +229,8 @@ async function analyzeText(res) {
   let engineID = '005572698672398171083:ivrztdlnswq';
   let apiKEY = 'AIzaSyD3LznTS-2wAG8JP0AV_2g7HTO94ycY1pM';
   const Url = `https://www.googleapis.com/customsearch/v1?${apiKEY}&cx=${engineID}&q=${search}`;
-  axios.get(Url)
-    .then(data => { console.log(data)}).catch( err => { console.log(err) });
+  const request = await new Request(Url);
+  console.log(request.uri.query);
 
   //WRITE TO FILE OUTPUT
   await new Promise((resolve, reject) => {
